@@ -46,20 +46,6 @@ public class PatientProf{
         this.medCondInfo = medCondInfo;
     }
 
-
-    /**
-     * Equality method for comparing PatientProf.
-     * Needed to check for duplicates in PatientDB.
-     * @param patient the patient to check against
-     * @return True if lastName and adminID match
-     */
-    public boolean equals(PatientProf patient){
-        return((this.adminID.equals(patient.adminID))
-                & (this.lastName.equals(patient.lastName))
-        );
-    }
-
-
     public String getAdminID() {
         return adminID;
     }
