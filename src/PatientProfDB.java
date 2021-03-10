@@ -1,3 +1,4 @@
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.File;
@@ -7,7 +8,7 @@ import java.util.*;
 
 public class PatientProfDB{
     public int numPatient = 0;
-    private int currentPatientIndex;
+    private int currentPatientIndex = 0;
     private String fileName;
     private final List<PatientProf> patientList = new ArrayList<PatientProf>();
     private final String EXTENSION = ".json";
@@ -20,7 +21,9 @@ public class PatientProfDB{
                     + " file.");
         }
 
-        File DBFile = new File(filePath);
+        this.fileName = filePath;
+
+        File DBFile = new File(this.fileName);
 
         //check if file exists, create if not
         boolean newFile = DBFile.createNewFile();
@@ -34,7 +37,7 @@ public class PatientProfDB{
         }
         //if existing DB file read in the contents
         if(!newFile){
-            initializeDatabase(filePath);
+            initializeDatabase(this.fileName);
         }
         //TODO call interface method to prompt new database creation
         //call writeDatabase if wanted
@@ -42,24 +45,96 @@ public class PatientProfDB{
 
 
     /**
-     * Scans the contents of a JSON PatientDB file into the DB.
-     * @param filePath The filepath of a database JSON file
+     * Adds the given patientProf to the database's List of patients
+     * @param patientProf patient profile to add
      */
-    public void initializeDatabase(String filePath){
-        Scanner scanner = new Scanner(filePath);
-        scanner.useDelimiter(",");
-        while(scanner.hasNext()){
-            //TODO
-        }
-
+    public void insertNewProfile(PatientProf patientProf){
+        this.patientList.add(patientProf);
+        this.numPatient++;
     }
 
 
     /**
-     * Writes the PatientDB to the specified filepath as a JSON file.
+     * Deletes the patient profile associated with the adminID and
+     * lastName given. If successful returns true.
+     * @param adminID the adminID of the profile to delete
+     * @param lastName the lastName of the profile to delete
+     * @return true if delete successful
+     */
+    public boolean deleteProfile(String adminID, String lastName){
+        boolean returnValue;
+        PatientProf profile = this.findProfile(adminID, lastName);
+
+        //patient will only delete if adminID nad lastName on profile match
+        //this is bc findProfile() would return null if they didn't
+        if(profile != null){
+            this.patientList.remove(profile);
+            this.numPatient--;
+            returnValue = true;
+        }
+        else{
+            returnValue = false;
+        }
+
+        return returnValue;
+    }
+
+
+    /**
+     * Finds the patient profile that matches the adminID and lastName.
+     * @param adminID the adminID on the profile to find
+     * @param lastName the lastName on the profile to find
+     * @return the associated PatientProfile. Will be Null if not found.
+     */
+    public @Nullable PatientProf findProfile(String adminID, String lastName){
+        PatientProf returnValue = null;
+        //go through each patient in the DB
+        for(PatientProf patient: this.patientList){
+            //if adminID and lastName match return the patient
+            if(patient.getAdminID().equals(adminID) &
+                    patient.getLastName().equals(lastName)){
+                returnValue = patient;
+                break;
+            }
+        }
+
+        return returnValue;
+    }
+
+
+    /**
+     * @return the first patientProf in the database
+     */
+    public PatientProf findFirstProfile(){
+        return this.patientList.get(0);
+    }
+
+
+    /**
+     * Gets the next patientProf in the database and iterates the
+     * currentPatientIndex. If the index has reached the end it resets to 0.
+     * @return the next patientProf in the database
+     */
+    public PatientProf findNextProfile(){
+        PatientProf returnValue = this.patientList.get(this.currentPatientIndex);
+
+        //Make sure the index doesn't go out of bounds
+        if(this.currentPatientIndex < this.patientList.toArray().length - 1){
+            this.currentPatientIndex++;
+        }
+        else{
+            this.currentPatientIndex = 0;
+        }
+
+        return returnValue;
+    }
+
+
+    /**
+     * Writes the patientList to the specified filepath as a JSON file.
      * @param filepath the desired filepath of the JSON file
      */
-    private void writeDatabase(String filepath) throws RuntimeException{
+    public void writeAllPatientProf(String filepath) throws RuntimeException{
         File databaseFile = new File(filepath);
         //create file
         try {
@@ -100,6 +175,25 @@ public class PatientProfDB{
 
 
     /**
+     * Scans the contents of a JSON PatientDB file into the DB.
+     * @param filePath The filepath of a database JSON file
+     */
+    public void initializeDatabase(String filePath) throws RuntimeException{
+        if(checkFileExtension(filePath, this.EXTENSION)){
+            throw new RuntimeException("Expected a " + EXTENSION
+                    + " file.");
+        }
+        this.fileName = filePath;
+        Scanner scanner = new Scanner(filePath);
+        scanner.useDelimiter(",");
+        while(scanner.hasNext()){
+            //TODO
+        }
+
+    }
+
+
+    /**
      * Checks if the provided filename has the given file extension.
      * Does not handle illegal filenames.
      * @param fileName the file name to check the extension of
@@ -119,6 +213,7 @@ public class PatientProfDB{
      * @param patientList List of PatientProfs
      * @return a JSONArray containing all patients in patientList
      */
+
     private JSONArray constructPatientJsonArray(List<PatientProf> patientList){
         JSONArray dbArray = new JSONArray();
         //iterate over patients in DB
@@ -150,4 +245,5 @@ public class PatientProfDB{
 
         return dbArray;
     }
+
 }
