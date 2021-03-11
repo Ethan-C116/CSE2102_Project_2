@@ -1,5 +1,6 @@
 // MedCond class Keeps track of the special medical conditions for a patient,
 // i.e., allergies, life threatening or chronic medical conditions, and physician contact information.
+// contains a constructor method and getters and setters
 
 public class MedCond {
 
@@ -9,49 +10,32 @@ public class MedCond {
     private String algType;     // (none, food, medication, other)
     private String illType;     // (none, CHD, diabetes, asthma, other)
 
-    // not sure what this does? need to check in with Ethan
-//    public static String medCond(){
-//
-//    }
-
-    // retrieves the patient's physician contact (i.e. name)
-    public void getMdContact(){
-        if (this.mdContact != null){
-            System.out.println("Patient's Physician Name: " + this.mdContact);
-        }
-        else{
-            System.out.println("Patient has no physician on file");
-        }
+    // constructor class
+    public MedCond(String mdContact, String mdPhone, String algType, String illType){
+        this.mdContact = mdContact;
+        this.mdPhone = mdPhone;
+        this.algType = algType;
+        this.illType = illType;
     }
 
-    // retrieves patient's physician phone number
-    public void getMdPhone(){
-        if(this.mdPhone != null){
-            System.out.println("Patient's Physician Phone Number: " + this.mdPhone);
-        }
-        else {
-            System.out.println("Patient has no physician phone number on file");
-        }
+    // Getters for class
+    public String getMdContact(){
+        return this.mdContact;
     }
 
-    public void getAlgType(){
-        if(this.algType != null){
-            System.out.println("Patient's Allergy Type: " + this.algType);
-        }
-        else {
-            System.out.println("Patient has no allergies on file");
-        }
+    public String getMdPhone(){
+        return this.mdPhone;
     }
 
-    public void getIllType(){
-        if(this.illType != null){
-            System.out.println("Patient's Illness Type: " + this.illType);
-        }
-        else {
-            System.out.println("Patient has no allergies on file");
-        }
+    public String getAlgType(){
+        return this.algType; 
     }
 
+    public String getIllType(){
+        return this.illType;
+    }
+    
+    // setters for class
     public void updateMdContact(String c){
         this.mdContact = c;
     }
