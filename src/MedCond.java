@@ -2,6 +2,8 @@
 // i.e., allergies, life threatening or chronic medical conditions, and physician contact information.
 // contains a constructor method and getters and setters
 
+import java.util.Locale;
+
 public class MedCond {
 
     // Attributes
@@ -14,8 +16,20 @@ public class MedCond {
     public MedCond(String mdContact, String mdPhone, String algType, String illType){
         this.mdContact = mdContact;
         this.mdPhone = mdPhone;
-        this.algType = algType;
-        this.illType = illType;
+        if(checkAlgType(algType)){
+            this.algType = algType;
+        }
+        else{
+            throw new RuntimeException("Unexpected input for AlgType." +
+                    "AlgType should be 'none', 'food', 'medication', or 'other'");
+        }
+        if(checkIllType(illType)){
+            this.illType = illType;
+        }
+        else{
+            throw new RuntimeException("Unexpected input for IllType." +
+                    "IllType should be 'none', 'CHD', 'diabetes', 'asthma', or 'other'");
+        }
     }
 
     // Getters for class
@@ -28,7 +42,7 @@ public class MedCond {
     }
 
     public String getAlgType(){
-        return this.algType; 
+        return this.algType;
     }
 
     public String getIllType(){
@@ -45,11 +59,46 @@ public class MedCond {
     }
 
     public void updateAlgType(String a){
-        this.algType = a;
+        if(checkAlgType(a)){
+            this.algType = a;
+        }
+        else{
+            throw new RuntimeException("Unexpected input for AlgType." +
+                    "AlgType should be 'none', 'food', 'medication', or 'other'");
+        }
     }
 
     public void updateIllType(String i){
-        this.illType = i;
+        if(checkIllType(i)){
+            this.illType = i;
+        }
+        else{
+            throw new RuntimeException("Unexpected input for IllType." +
+                    "IllType should be 'none', 'CHD', 'diabetes', 'asthma', or 'other'");
+        }
     }
 
+    /**
+     * Checks if illType matches one of the expected illness types
+     * @param illType String of illType
+     * @return true if illType matches expected illnesses
+     */
+    private boolean checkIllType(String illType){
+        illType = illType.toLowerCase(Locale.ROOT).strip();
+        return illType.equals("none") | illType.equals("chd") |
+                illType.equals("diabetes") | illType.equals("asthma") |
+                illType.equals("other");
+    }
+
+
+    /**
+     * Checks if algType matches one of the expected allergy types.
+     * @param algType String of algType
+     * @return true if algType matches expected allergies
+     */
+    private boolean checkAlgType(String algType){
+        algType = algType.toLowerCase(Locale.ROOT).strip();
+        return algType.equals("none") | algType.equals("food") |
+                algType.equals("medication") | algType.equals("other");
+    }
 }
