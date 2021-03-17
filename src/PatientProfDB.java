@@ -11,30 +11,41 @@ public class PatientProfDB{
     public int numPatient = 0;
     private int currentPatientIndex = 0;
     private String fileName;
+    private String adminID; //adminID of the user
     private final List<PatientProf> patientList = new ArrayList<PatientProf>();
-    private final String EXTENSION = ".json";
+    private final String EXTENSION = "json";
 
 
-    public PatientProfDB(String filePath) throws IOException, RuntimeException {
+    public PatientProfDB(String filePath, String adminID) throws RuntimeException {
         //check if correct type of file
         if(!checkFileExtension(filePath, EXTENSION)){
             throw new RuntimeException("Expected a " + EXTENSION
                     + " file.");
         }
-
+        this.adminID = adminID;
         this.fileName = filePath;
 
         File DBFile = new File(this.fileName);
 
         //check if file exists, create if not
-        boolean newFile = DBFile.createNewFile();
+        boolean newFile = false;
+        try {
+            newFile = DBFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException("IO error occurred creating file.");
+        }
 
         //if existing DB file read in the contents
         if(!newFile){
+            System.out.println("File already exists. Initializing existing DB at " + this.fileName);
             initializeDatabase(this.fileName);
         }
         //TODO call interface method to prompt new database creation
         //call writeDatabase if wanted
+        else{
+            System.out.println("No existing DB file found at" + this.fileName +
+                    "Double-check file path or continue to create new DB file.");
+        }
     }
 
 
@@ -105,8 +116,8 @@ public class PatientProfDB{
 
 
     /**
-     * Gets the next patientProf in the database and iterates the
-     * currentPatientIndex. If the index has reached the end it resets to 0.
+     * Gets the next patientProf in the database that matches the user's adminID
+     * and iterates the currentPatientIndex. If the index has reached the end it resets to 0.
      * @return the next patientProf in the database
      */
     public PatientProf findNextProfile(){
@@ -119,7 +130,6 @@ public class PatientProfDB{
         else{
             this.currentPatientIndex = 0;
         }
-
         return returnValue;
     }
 
@@ -130,17 +140,14 @@ public class PatientProfDB{
      */
     public void writeAllPatientProf(String filepath) throws RuntimeException{
         File databaseFile = new File(filepath);
-        //create file
+        //create a new file.
         try {
-            if (!databaseFile.createNewFile()) {
-                throw new RuntimeException("Couldn't write database file at "
-                        + filepath + ". File already exists with that name");
-            }
+            databaseFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException("IOException in writeAllPatientProf " + e);
         }
-        catch(IOException e){
-            throw new RuntimeException("Couldn't write database file " + e);
-        }
-        //check writable
+
+        //set writable
         if(!databaseFile.setWritable(true)){
             throw new RuntimeException("No write permission for the document");
         }
@@ -165,6 +172,14 @@ public class PatientProfDB{
             throw new RuntimeException("Failed to write database file " + e);
         }
 
+        //close file
+        try {
+            writer.flush();
+            writer.close();
+        }
+        catch (IOException e){
+            throw new RuntimeException("FileWriter couldn't close properly.");
+        }
     }
 
 
@@ -173,10 +188,6 @@ public class PatientProfDB{
      * @param filePath The filepath of a database JSON file
      */
     public void initializeDatabase(String filePath) throws RuntimeException{
-        if(checkFileExtension(filePath, this.EXTENSION)){
-            throw new RuntimeException("Expected a " + EXTENSION
-                    + " file.");
-        }
         FileReader fileReader;
         try {
             fileReader = new FileReader(filePath);
@@ -185,9 +196,17 @@ public class PatientProfDB{
             throw new RuntimeException("Unable to find file '" + filePath + "'.");
         }
 
+
         this.fileName = filePath;
         JSONTokener tokener = new JSONTokener(fileReader); //tokener to read JSON from file
-        JSONArray array = new JSONArray(tokener); //JSON array from file
+        JSONArray array;
+        try {
+            array = new JSONArray(tokener); //JSON array from file
+        }
+        catch (JSONException e){
+            throw new RuntimeException("JSONException when tokenening file " + this.fileName + ". " + e);
+        }
+
 
         int JSONIndex = 0;
         //iterate through JSONArray until exception
@@ -233,8 +252,8 @@ public class PatientProfDB{
             MedCond medCond = new MedCond(mdContact, mdPhone, algType, illType);
             PatientProf patientProf = new PatientProf(adminID, firstName, lastName,
                     phone, coPay, insuType, patientType, medCond);
-            //add patientProf to patientList
-            this.patientList.add(patientProf);
+            //add patientProf to DB
+            insertNewProfile(patientProf);
 
             //iterate index
             JSONIndex++;
@@ -299,6 +318,28 @@ public class PatientProfDB{
         }
 
         return dbArray;
+    }
+
+    private void constructTestPatientList(int numPatients){
+        for(int i = 0; i < numPatients; i++){
+            String firstName = "john" + i;
+            String lastName = "doe" + i;
+            String phone = "8604864357";
+            float coPay = (float) 0.00;
+            String insuType = "Private";
+            String patientType = "Adult";
+            String mdContact = "Dr. Nancy";
+            String mdPhone = "8604864357";
+            String algType = "None";
+            String illType = "None";
+
+            MedCond medCond = new MedCond(mdContact, mdPhone, algType, illType);
+            PatientProf patient = new PatientProf(this.adminID,
+                    firstName, lastName, phone, coPay, insuType,
+                    patientType, medCond);
+
+            insertNewProfile(patient);
+        }
     }
 
 }
