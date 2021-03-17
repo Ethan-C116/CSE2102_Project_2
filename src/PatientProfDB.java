@@ -1,9 +1,10 @@
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import org.json.JSONTokener;
+
+import java.io.*;
 import java.util.*;
 
 public class PatientProfDB{
@@ -28,13 +29,6 @@ public class PatientProfDB{
         //check if file exists, create if not
         boolean newFile = DBFile.createNewFile();
 
-        //set read/write permission
-        if(!DBFile.setReadable(true)){
-            throw new RuntimeException("No read permission for DB file");
-        }
-        if(!DBFile.setWritable(true)){
-            throw new RuntimeException("No write permission for DB file");
-        }
         //if existing DB file read in the contents
         if(!newFile){
             initializeDatabase(this.fileName);
@@ -183,13 +177,74 @@ public class PatientProfDB{
             throw new RuntimeException("Expected a " + EXTENSION
                     + " file.");
         }
-        this.fileName = filePath;
-        Scanner scanner = new Scanner(filePath);
-        scanner.useDelimiter(",");
-        while(scanner.hasNext()){
-            //TODO
+        FileReader fileReader;
+        try {
+            fileReader = new FileReader(filePath);
+        }
+        catch(FileNotFoundException e){
+            throw new RuntimeException("Unable to find file '" + filePath + "'.");
         }
 
+        this.fileName = filePath;
+        JSONTokener tokener = new JSONTokener(fileReader); //tokener to read JSON from file
+        JSONArray array = new JSONArray(tokener); //JSON array from file
+
+        int JSONIndex = 0;
+        //iterate through JSONArray until exception
+        while(true){
+            JSONObject JSONPatient;
+            //try to get next object in array
+            try{
+                JSONPatient = array.getJSONObject(JSONIndex);
+            }
+            //if no more objects or other problem break loop
+            catch (JSONException e){
+                break;
+            }
+
+            //initialize temp values to store read patient info
+            String adminID, firstName, lastName, phone, insuType, patientType;
+            float coPay;
+            String mdContact, mdPhone, algType, illType;
+
+            try {
+                //get patientProf values from JSON object
+                adminID = JSONPatient.getString("adminID");
+                firstName = JSONPatient.getString("firstName");
+                lastName = JSONPatient.getString("lastName");
+                phone = JSONPatient.getString("phone");
+                coPay = JSONPatient.getFloat("coPay");
+                insuType = JSONPatient.getString("insuType");
+                patientType = JSONPatient.getString("patientType");
+
+                //get patient's MedCondInfo values
+                JSONObject JSONMedCond = JSONPatient.getJSONObject("medCondInfo");
+                mdContact = JSONMedCond.getString("mdContact");
+                mdPhone = JSONMedCond.getString("mdPhone");
+                algType = JSONMedCond.getString("algType");
+                illType = JSONMedCond.getString("illType");
+            }
+            catch(JSONException e){
+                throw new RuntimeException("Error reading in database file." +
+                        "Bad JSON file or information missing.");
+            }
+
+            //create patientProf
+            MedCond medCond = new MedCond(mdContact, mdPhone, algType, illType);
+            PatientProf patientProf = new PatientProf(adminID, firstName, lastName,
+                    phone, coPay, insuType, patientType, medCond);
+            //add patientProf to patientList
+            this.patientList.add(patientProf);
+
+            //iterate index
+            JSONIndex++;
+        }
+
+        try {
+            fileReader.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't close fileReader.");
+        }
     }
 
 
