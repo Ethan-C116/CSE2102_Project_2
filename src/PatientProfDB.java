@@ -40,8 +40,6 @@ public class PatientProfDB{
             System.out.println("File already exists. Initializing existing DB at " + this.fileName);
             initializeDatabase(this.fileName);
         }
-        //TODO call interface method to prompt new database creation
-        //call writeDatabase if wanted
         else{
             System.out.println("No existing DB file found at" + this.fileName +
                     "Double-check file path or continue to create new DB file.");
@@ -204,7 +202,7 @@ public class PatientProfDB{
             array = new JSONArray(tokener); //JSON array from file
         }
         catch (JSONException e){
-            throw new RuntimeException("JSONException when tokenening file " + this.fileName + ". " + e);
+            throw new RuntimeException("Error parsing file " + this.fileName + ". " + e.toString());
         }
 
 
