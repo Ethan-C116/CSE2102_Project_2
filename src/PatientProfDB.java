@@ -14,6 +14,10 @@ public class PatientProfDB{
     private String adminID; //adminID of the user
     private final List<PatientProf> patientList = new ArrayList<PatientProf>();
     private final String EXTENSION = "json";
+    //used to see if findNextProfile has gone through entire list
+    private boolean findNextProfileReachedEnd = false;
+    //used to indicate that the adminID has no patients in list
+    private boolean noProfilesMatching = false;
 
 
     public PatientProfDB(String filePath, String adminID) throws RuntimeException {
@@ -100,36 +104,96 @@ public class PatientProfDB{
                 break;
             }
         }
-
         return returnValue;
     }
 
 
     /**
-     * @return the first patientProf in the database
+     * Finds and returns the first patient in the database that matches the user's adminID.
+     * @return the first patientProf in the database. Null if no patient with matching adminID is in database
      */
-    public PatientProf findFirstProfile(){
-        return this.patientList.get(0);
+    public @Nullable PatientProf findFirstProfile(){
+        //if the first patient in list matches adminID get that
+        PatientProf patient = null;
+        for(int i = 0; i < this.patientList.toArray().length; i++){
+            PatientProf patientProf = this.patientList.get(i);
+            if(patientProf.getAdminID().equals(this.adminID)){
+                patient = patientProf;
+                break;
+            }
+        }
+
+        return patient;
     }
 
 
     /**
      * Gets the next patientProf in the database that matches the user's adminID
      * and iterates the currentPatientIndex. If the index has reached the end it resets to 0.
-     * @return the next patientProf in the database
+     * @return the next patientProf in the database, or null if no patient in database matching adminID.
      */
-    public PatientProf findNextProfile(){
-        PatientProf returnValue = this.patientList.get(this.currentPatientIndex);
+    public @Nullable PatientProf findNextProfile(){
+        while(this.currentPatientIndex < this.patientList.toArray().length){
+            //start by checking if next patient matches adminID
+            PatientProf patientProf = this.patientList.get(this.currentPatientIndex);
+            if(patientProf.getAdminID().equals(this.adminID)) {
+                //if adminID matches, return that profile
+                currentPatientIndex++;
+                //make array loop back to beginning
+                if(currentPatientIndex >= this.patientList.toArray().length){
+                    currentPatientIndex = 0;
+                }
+                return patientProf;
+            }
 
-        //Make sure the index doesn't go out of bounds
-        if(this.currentPatientIndex < this.patientList.toArray().length - 1){
-            this.currentPatientIndex++;
+            currentPatientIndex++;
+            //make array loop back to beginning
+            if(currentPatientIndex >= this.patientList.toArray().length){
+                currentPatientIndex = 0;
+            }
+
+        }
+        //if nothing is found in array
+        return null;
+    }
+    /*
+    public @Nullable PatientProf findNextProfile(){
+        PatientProf returnValue = null;
+
+        //if currentPatientIndex is the end of the array set it to 0
+        //to loop back to start of the array
+        boolean resetFlag = false;
+        if(this.currentPatientIndex == this.patientList.toArray().length - 1){
+            System.out.println("Time to reset");
+            this.currentPatientIndex = 0;
+            resetFlag = true;
+        }
+
+
+        //start at next patient
+        int startIndex;
+        if(resetFlag){
+            startIndex = this.currentPatientIndex;
         }
         else{
-            this.currentPatientIndex = 0;
+            startIndex = this.currentPatientIndex + 1;
         }
+
+        for(int i = startIndex; i < this.patientList.toArray().length; i++){
+            PatientProf patientProf = this.patientList.get(i);
+            System.out.println("patient at i = " + i + " is " + patientProf.getFirstName() + " " + patientProf.getLastName());
+            //if the patientProf matches the adminID return it
+            this.currentPatientIndex ++;
+            if(patientProf.getAdminID().equals(this.adminID)){
+                System.out.println("Admin ID for " + patientProf.getFirstName() + " " + patientProf.getLastName() + " matches.");
+                returnValue = patientProf;
+                break;
+            }
+        }
+
         return returnValue;
     }
+     */
 
 
     /**
