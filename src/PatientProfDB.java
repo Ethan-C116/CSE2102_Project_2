@@ -45,8 +45,8 @@ public class PatientProfDB{
             initializeDatabase(this.fileName);
         }
         else{
-            System.out.println("No existing DB file found at" + this.fileName +
-                    "Double-check file path or continue to create new DB file.");
+            System.out.println("No existing DB file found at " + this.fileName +
+                    ". Continue to start a new DB file.");
         }
     }
 
