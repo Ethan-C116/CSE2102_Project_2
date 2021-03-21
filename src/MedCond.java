@@ -50,15 +50,15 @@ public class MedCond {
     }
     
     // setters for class
-    public void updateMdContact(String c){
+    public void setMdContact(String c){
         this.mdContact = c;
     }
 
-    public void updateMdPhone(String p){
+    public void setMdPhone(String p){
         this.mdPhone = p;
     }
 
-    public void updateAlgType(String a){
+    public void setAlgType(String a) throws RuntimeException{
         if(checkAlgType(a)){
             this.algType = a;
         }
@@ -68,7 +68,7 @@ public class MedCond {
         }
     }
 
-    public void updateIllType(String i){
+    public void setIllType(String i) throws RuntimeException{
         if(checkIllType(i)){
             this.illType = i;
         }

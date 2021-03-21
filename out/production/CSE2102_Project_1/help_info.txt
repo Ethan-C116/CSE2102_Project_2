@@ -1,0 +1,26 @@
+PatientProfInterface(String databaseFile)
+	databaseFile - The file path of a database file. 
+		If the database file exists it will be loaded. If the file does not exist,
+		the file path will be used to store the database if writeToDB() is called.
+	
+	The adminID entered on launch will be used for all database functions. It cannot
+	be changed after it's confirmed.
+--Menu Options--
+	1 - Enter a new PatientProf
+		Create a new patient profile and add it to the database.
+	2 - Delete a PatientProf
+		Deletes the patient profile found using the information entered.
+	3 - Find a PatientProf
+		Finds and displays a patient profile using the information provided.
+		If more than one patient exists with the same information, only the first
+		will be displayed.
+	4 - Modify a PatientProf
+		Allows modification of an existing patient profile.
+	5 - Display all Profiles
+		Displays all patient profiles which the user has access to.
+	6 - Write changes to database file
+		Updates the database file passed in at launch. If there is no existing
+		database file at that file path one will be created.
+	7 - Load information from database file.
+		Loads a database from a given file path. The contents of the file will
+		be added to the existing database. This does not check for duplicates.

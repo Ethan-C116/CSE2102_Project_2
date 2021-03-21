@@ -156,44 +156,10 @@ public class PatientProfDB{
         //if nothing is found in array
         return null;
     }
-    /*
-    public @Nullable PatientProf findNextProfile(){
-        PatientProf returnValue = null;
 
-        //if currentPatientIndex is the end of the array set it to 0
-        //to loop back to start of the array
-        boolean resetFlag = false;
-        if(this.currentPatientIndex == this.patientList.toArray().length - 1){
-            System.out.println("Time to reset");
-            this.currentPatientIndex = 0;
-            resetFlag = true;
-        }
-
-
-        //start at next patient
-        int startIndex;
-        if(resetFlag){
-            startIndex = this.currentPatientIndex;
-        }
-        else{
-            startIndex = this.currentPatientIndex + 1;
-        }
-
-        for(int i = startIndex; i < this.patientList.toArray().length; i++){
-            PatientProf patientProf = this.patientList.get(i);
-            System.out.println("patient at i = " + i + " is " + patientProf.getFirstName() + " " + patientProf.getLastName());
-            //if the patientProf matches the adminID return it
-            this.currentPatientIndex ++;
-            if(patientProf.getAdminID().equals(this.adminID)){
-                System.out.println("Admin ID for " + patientProf.getFirstName() + " " + patientProf.getLastName() + " matches.");
-                returnValue = patientProf;
-                break;
-            }
-        }
-
-        return returnValue;
+    public List<PatientProf> getPatientList(){
+        return this.patientList;
     }
-     */
 
 
     /**
@@ -246,7 +212,8 @@ public class PatientProfDB{
 
 
     /**
-     * Scans the contents of a JSON PatientDB file into the DB.
+     * Scans the contents of a JSON PatientDB file into the DB. This does not check for
+     * duplicates before adding a profile to the DB.
      * @param filePath The filepath of a database JSON file
      */
     public void initializeDatabase(String filePath) throws RuntimeException{
@@ -284,7 +251,7 @@ public class PatientProfDB{
             }
 
             //initialize temp values to store read patient info
-            String adminID, firstName, lastName, phone, insuType, patientType;
+            String adminID, firstName, lastName, address, phone, insuType, patientType;
             float coPay;
             String mdContact, mdPhone, algType, illType;
 
@@ -293,6 +260,7 @@ public class PatientProfDB{
                 adminID = JSONPatient.getString("adminID");
                 firstName = JSONPatient.getString("firstName");
                 lastName = JSONPatient.getString("lastName");
+                address = JSONPatient.getString("address");
                 phone = JSONPatient.getString("phone");
                 coPay = JSONPatient.getFloat("coPay");
                 insuType = JSONPatient.getString("insuType");
@@ -312,7 +280,7 @@ public class PatientProfDB{
 
             //create patientProf
             MedCond medCond = new MedCond(mdContact, mdPhone, algType, illType);
-            PatientProf patientProf = new PatientProf(adminID, firstName, lastName,
+            PatientProf patientProf = new PatientProf(adminID, firstName, lastName, address,
                     phone, coPay, insuType, patientType, medCond);
             //add patientProf to DB
             insertNewProfile(patientProf);
@@ -360,6 +328,7 @@ public class PatientProfDB{
             patientObj.put("adminID", patient.getAdminID());
             patientObj.put("firstName", patient.getFirstName());
             patientObj.put("lastName", patient.getLastName());
+            patientObj.put("address", patient.getAddress());
             patientObj.put("phone", patient.getPhone());
             patientObj.put("coPay", patient.getCoPay());
             patientObj.put("insuType", patient.getInsuType());
@@ -386,6 +355,7 @@ public class PatientProfDB{
         for(int i = 0; i < numPatients; i++){
             String firstName = "john" + i;
             String lastName = "doe" + i;
+            String address = "123 Street St";
             String phone = "8604864357";
             float coPay = (float) 0.00;
             String insuType = "Private";
@@ -397,7 +367,7 @@ public class PatientProfDB{
 
             MedCond medCond = new MedCond(mdContact, mdPhone, algType, illType);
             PatientProf patient = new PatientProf(this.adminID,
-                    firstName, lastName, phone, coPay, insuType,
+                    firstName, lastName, address, phone, coPay, insuType,
                     patientType, medCond);
 
             insertNewProfile(patient);

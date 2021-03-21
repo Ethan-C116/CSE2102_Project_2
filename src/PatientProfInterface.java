@@ -1,3 +1,6 @@
+import java.io.*;
+import java.util.IllformedLocaleException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -5,6 +8,7 @@ public class PatientProfInterface{
     private PatientProfDB DB;
     private String FILEPATH;
     private String adminID;
+    private final String HELPFILEPATH = "help_info.txt";
     private final String WELCOME_MESSAGE = "Welcome to the Integrated Patient Management System!";
 
 
@@ -12,14 +16,17 @@ public class PatientProfInterface{
      * @param databaseFilePath String The file path of the database file.
      *                        Can be null or "" if no existing database file.
      */
-    public void PatientProfInterface(String databaseFilePath){
+    public PatientProfInterface(String databaseFilePath){
         this.FILEPATH = databaseFilePath;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Hello!");
+        System.out.println("Please enter your adminID to begin:");
+        this.adminID = scanner.nextLine();
 
         //prompt adminID and ask if correct
+        /*
         while(true) {
-            System.out.println("Please enter your adminID to begin: ");
+            System.out.println("Please enterD your adminID to begin:");
             this.adminID = scanner.nextLine();
 
             System.out.println("You entered: " + this.adminID + ". Correct? (Y/N)");
@@ -28,6 +35,9 @@ public class PatientProfInterface{
                 break;
             }
         }
+
+         */
+
         scanner.close();
 
         //initialize DB using given filepath
@@ -47,11 +57,11 @@ public class PatientProfInterface{
      * call the appropriate method(s) for user's choice.
      */
     private void getUserChoice(){
-        boolean menuFlag = true;
         System.out.println("Welcome to the Integrated Patient Management System!");
+        System.out.println("Changes to the database must be saved by writing to the database file.");
 
         //display menu until option selected
-        while(menuFlag) {
+        while(true) {
             System.out.println("");
             System.out.println("");
             System.out.println("Please select a menu option by entering its number.");
@@ -70,34 +80,34 @@ public class PatientProfInterface{
             //if response doesn't match display menu again
             switch (response) {
                 case "1" -> {
-                    createNewPatientProf();
-                    menuFlag = false;
+                    PatientProf patientProf = createNewPatientProf();
+                    DB.insertNewProfile(patientProf);
                 }
                 case "2" -> {
                     deletePatientProf();
-                    menuFlag = false;
                 }
                 case "3" -> {
                     findPatientProf();
-                    menuFlag = false;
                 }
                 case "4" -> {
                     modifyPatientProf();
-                    menuFlag = false;
                 }
                 case "5" -> {
                     displayAllPatientProf();
-                    menuFlag = false;
                 }
                 case "6" -> {
                     writeToDB();
-                    menuFlag = false;
                 }
                 case "7" -> {
                     initDB();
-                    menuFlag = false;
                 }
-                case "h" -> printHelpMessage();
+                case "h" -> {
+                    try {
+                        printHelpMessage();
+                    } catch (IOException e) {
+                        System.out.println("Error printing help message." + e.toString());
+                    }
+                }
             }
         }
 
@@ -118,7 +128,7 @@ public class PatientProfInterface{
         scanner.close();
 
         //check to see if exit
-        if (checkforExit(response)) {
+        if (checkForExit(response)) {
             getUserChoice();
         }
         //find patient
@@ -154,19 +164,160 @@ public class PatientProfInterface{
         }
     }
 
+
     /**
      * Walks user through finding a patientProf using adminID and lastName.
+     * Displays the profile if patient found. Will loop until user enters exit command.
      */
     private void findPatientProf(){
-
+        PatientProf patientProf = findAndReturnPatientProf();
+        displayPatientProf(patientProf);
     }
+
+
+    /**
+     * Walks user through finding a patient profile and returns that profile.
+     * @return the found patient profile
+     */
+    private PatientProf findAndReturnPatientProf(){
+        System.out.println("--Find Patient Profile--");
+        System.out.println("Enter '-e' to return to menu.");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the last name of the patient to find.");
+        String response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
+        scanner.close();
+
+        //check to see if exit
+        if (checkForExit(response)) {
+            getUserChoice();
+        }
+
+        //find patient
+        PatientProf patient = DB.findProfile(this.adminID, response);
+
+        //if no patient found, start again
+        if(patient == null){
+            System.out.println("No patient found.");
+            findPatientProf();
+        }
+        //if patient found, display patient and start again
+        System.out.println("Found patient profile:");
+        return patient;
+    }
+
 
     /**
      * Walks the user through updating information stored in
      * a patientProf.
      */
-    private void updatePatientProf(){
+    private void updatePatientProf(PatientProf patient){
+        System.out.println("--Update a Patient Prof--");
+        System.out.println("Current patient info: ");
+        displayPatientProf(patient);
+        String update;
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Which info would you like to change");
+        System.out.println("1 - Address");
+        System.out.println("2 - Phone");
+        System.out.println("3 - CoPay");
+        System.out.println("4 - Insurance Type");
+        System.out.println("5 - Patient Type");
+        System.out.println("6 - Medical Conditions");
+        String response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
+
+        //check which option was selected and update that option
+        switch(response){
+            case "1" -> {
+                System.out.println("Enter new address:");
+                update = scanner.nextLine().strip();
+                patient.setAddress(update);
+            }
+            case "2" -> {
+                System.out.println("Enter new phone:");
+                update = scanner.nextLine().strip();
+                patient.setPhone(update);
+            }
+            case "3" -> {
+                System.out.println("Enter new CoPay:");
+                update = scanner.nextLine().strip();
+                patient.setCoPay(Float.parseFloat(update));
+            }
+            case "4" -> {
+                System.out.println("Enter new Insurance Type (Government, Private):");
+                update = scanner.nextLine().strip();
+                try {
+                    patient.setInsuType(update);
+                }
+                catch (RuntimeException e){
+                    System.out.println(e.toString());
+                }
+            }
+            case "5" -> {
+                System.out.println("Enter new Patient Type (Pediatric, Adult, Senior):");
+                update = scanner.nextLine().strip();
+                try {
+                    patient.setPatientType(update);
+                }
+                catch (RuntimeException e){
+                    System.out.println(e.toString());
+                }
+            }
+            case "6" ->{
+                System.out.println("What to update?");
+                System.out.println("1 - MdContact");
+                System.out.println("2 - MdPhone");
+                System.out.println("3 - Illness Type");
+                System.out.println("4 - Allergy Type");
+                String medResponse = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
+                switch(medResponse){
+                    case "1" -> {
+                        System.out.println("Enter new MdContact:");
+                        update = scanner.nextLine().strip();
+                        patient.getMedCondInfo().setMdContact(update);
+                    }
+                    case "2" -> {
+                        System.out.println("Enter new MdPhone:");
+                        update = scanner.nextLine().strip();
+                        patient.getMedCondInfo().setMdPhone(update);
+                    }
+                    case "3" -> {
+                        System.out.println("Enter new illness type:");
+                        update = scanner.nextLine().strip();
+                        try {
+                            patient.getMedCondInfo().setIllType(update);
+                        }
+                        catch (RuntimeException e){
+                            System.out.println(e.toString());
+                        }
+                    }
+                    case "4" -> {
+                        System.out.println("Enter new allergy type:");
+                        update = scanner.nextLine().strip();
+                        try {
+                            patient.getMedCondInfo().setAlgType(update);
+                        }
+                        catch (RuntimeException e){
+                            System.out.println(e.toString());
+                        }
+                    }
+                    default -> {
+                        System.out.println("Invalid Input");
+                    }
+                }
+            }
+            default -> {
+                System.out.println("Invalid Input");
+            }
+        }
+
+        //if user wants to update more patient information, loop
+        System.out.println("Update more? (Y/N)");
+        response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
+        scanner.close();
+        if(response.equals("y")){
+            updatePatientProf(patient);
+        }
     }
 
 
@@ -189,17 +340,22 @@ public class PatientProfInterface{
             System.out.println("\t\tMedical Contact: " + medcond.getMdContact());
             System.out.println("\t\tContact phone: " + medcond.getMdPhone());
             System.out.println("\t\tIllnesses: " + medcond.getIllType());
-            System.out.println("\t\tAllergies: " + medcond.getAlgType()));
+            System.out.println("\t\tAllergies: " + medcond.getAlgType());
             System.out.println("");
         }
     }
 
 
     /**
-     * Prints a list of every patient in the DB.
+     * Prints every patient in the DB for the user's adminID.
      */
     private void displayAllPatientProf(){
-
+        List<PatientProf> patientList = DB.getPatientList();
+        for(PatientProf patient:patientList){
+            if(patient.getAdminID().equals(this.adminID)){
+                displayPatientProf(patient);
+            }
+        }
     }
 
 
@@ -215,17 +371,21 @@ public class PatientProfInterface{
             System.out.println(e.toString());
             getUserChoice();
         }
-        //print success and go back to menu
+        //print success
         System.out.println("Write Successful");
-        getUserChoice();
     }
 
 
     /**
-     * Initialize a patientProfDB.
+     * Initialize a patientProfDB. Replaces the existing DB if needed.
      */
     private void initDB(){
-
+        try {
+            DB.initializeDatabase(this.FILEPATH);
+        }
+        catch (RuntimeException e){
+            System.out.println("Unable to read in database. " + e.toString());
+        }
     }
 
 
@@ -234,7 +394,32 @@ public class PatientProfInterface{
      * @return PatientProf
      */
     private PatientProf createNewPatientProf(){
-        PatientProf patientProf = null;
+        Scanner scanner = new Scanner(System.in);
+        String last, first, phone, address, insuType, patientType;
+        float coPay;
+
+        System.out.println("--Create new patient profile--");
+        System.out.println("Enter the following patient information: ");
+        System.out.println("First Name:");
+        first = scanner.nextLine().strip();
+        System.out.println("Last name:");
+        last = scanner.nextLine().strip();
+        System.out.println("Phone:");
+        phone = scanner.nextLine().strip();
+        System.out.println("Address:");
+        address = scanner.nextLine();
+        System.out.println("Insurance type (government, private):");
+        insuType = scanner.nextLine();
+        System.out.println("CoPay:");
+        coPay = Float.parseFloat(scanner.nextLine());
+        System.out.println("Patient type (pediatric, adult, senior):");
+        patientType = scanner.nextLine();
+        scanner.close();
+        MedCond medCond = createNewMedCond();
+
+        PatientProf patientProf = new PatientProf(this.adminID, first, last, address,
+                phone, coPay, insuType, patientType, medCond);
+
         return patientProf;
     }
 
@@ -244,23 +429,47 @@ public class PatientProfInterface{
      * @return MedCond
      */
     private MedCond createNewMedCond(){
-        MedCond medCond = null;
-        return medCond;
+        System.out.println("--New medCond--");
+        Scanner scanner = new Scanner(System.in);
+        String mdContact, mdPhone, illType, algType;
+
+        System.out.println("Patient medical contact:");
+        mdContact = scanner.nextLine().strip();
+        System.out.println("Medical contact's phone number:");
+        mdPhone = scanner.nextLine().strip();
+        System.out.println("Patient illness (none, CHD, diabetes, asthma, other):");
+        illType = scanner.nextLine().strip();
+        System.out.println("Patient allergies (none, food, medication, other):");
+        algType = scanner.nextLine().strip();
+
+        return new MedCond(mdContact, mdPhone, algType, illType);
     }
 
     /**
      * Walks the user through modifying a PatientProf.
+     * Finds a patient using findAndReturnPatientProf() and then calls
+     * updatePatientProf to change it.
      */
     private void modifyPatientProf(){
-
+        System.out.println("--Modify a patient profile--");
+        updatePatientProf(findAndReturnPatientProf());
     }
 
 
-    private void printHelpMessage(){
+    private void printHelpMessage() throws IOException{
+        File helpInfo = new File(this.HELPFILEPATH);
+        Scanner scanner = new Scanner(helpInfo);
 
+        //read and display the help file
+        while(scanner.hasNextLine()){
+            System.out.println(scanner.nextLine());
+        }
+
+        scanner.close();
+        getUserChoice();
     }
 
-    private boolean checkforExit(String message){
+    private boolean checkForExit(String message){
         message = message.toLowerCase(Locale.ROOT).strip();
         if(message.equals("-e")){
             return true;
