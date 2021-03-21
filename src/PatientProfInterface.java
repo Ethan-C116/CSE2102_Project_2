@@ -8,7 +8,7 @@ public class PatientProfInterface{
     private PatientProfDB DB;
     private String FILEPATH;
     private String adminID;
-    private final String HELPFILEPATH = "help_info.txt";
+    private final String HELPFILEPATH = "C:\\Users\\Ethan\\IdeaProjects\\CSE2102_Project_1\\src\\help_info.txt";
     private final String WELCOME_MESSAGE = "Welcome to the Integrated Patient Management System!";
 
 
@@ -20,13 +20,10 @@ public class PatientProfInterface{
         this.FILEPATH = databaseFilePath;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Hello!");
-        System.out.println("Please enter your adminID to begin:");
-        this.adminID = scanner.nextLine();
 
         //prompt adminID and ask if correct
-        /*
         while(true) {
-            System.out.println("Please enterD your adminID to begin:");
+            System.out.println("Please enter your adminID to begin:");
             this.adminID = scanner.nextLine();
 
             System.out.println("You entered: " + this.adminID + ". Correct? (Y/N)");
@@ -36,16 +33,13 @@ public class PatientProfInterface{
             }
         }
 
-         */
-
-        scanner.close();
-
         //initialize DB using given filepath
         try {
             DB = new PatientProfDB(databaseFilePath, this.adminID);
         }
         catch (RuntimeException e){
-            System.out.println(e.toString());
+            e.printStackTrace();
+            System.exit(1);
         }
 
         getUserChoice();
@@ -57,13 +51,12 @@ public class PatientProfInterface{
      * call the appropriate method(s) for user's choice.
      */
     private void getUserChoice(){
+        System.out.println("------------------------------");
         System.out.println("Welcome to the Integrated Patient Management System!");
         System.out.println("Changes to the database must be saved by writing to the database file.");
 
         //display menu until option selected
         while(true) {
-            System.out.println("");
-            System.out.println("");
             System.out.println("Please select a menu option by entering its number.");
             System.out.println("1 - Enter a new PatientProf");
             System.out.println("2 - Delete a PatientProf");
@@ -117,7 +110,6 @@ public class PatientProfInterface{
      * Walks the user through deleting the a PatientProf.
      * Prompts for adminID and lastName to look up profile, displays the profile,
      * and confirms deletion.
-     * Loops until user enters exit command.
       */
     private void deletePatientProf(){
         Scanner scanner = new Scanner(System.in);
@@ -125,7 +117,6 @@ public class PatientProfInterface{
         System.out.println("To exit to menu enter '-e'.");
         System.out.println("Enter the last name of the patient you wish to delete.");
         String response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
-        scanner.close();
 
         //check to see if exit
         if (checkForExit(response)) {
@@ -137,30 +128,25 @@ public class PatientProfInterface{
         //if no patient found, start deletePatientProf again
         if(patient == null){
             System.out.println("No patient found.");
-            deletePatientProf();
         }
-        System.out.println("Found patient profile:");
-        displayPatientProf(patient);
+        else {
+            System.out.println("Found patient profile:");
+            displayPatientProf(patient);
 
-        scanner = new Scanner(System.in);
-        System.out.println("Do you wish to delete? (Y/N)");
-        response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
-        scanner.close();
+            System.out.println("Do you wish to delete? (Y/N)");
+            response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
 
-        //if don't want to delete, restart deletePatientProf
-        if(!response.equals("y")) {
-            deletePatientProf();
-        }
-
-        //delete profile
-        boolean success = DB.deleteProfile(this.adminID, patient.getLastName());
-        if(success){
-            System.out.println("Deletion successful");
-            deletePatientProf();
-        }
-        else{
-            System.out.println("Deletion failed");
-            deletePatientProf();
+            //delete profile
+            if (response.equals("y")) {
+                boolean success = DB.deleteProfile(this.adminID, patient.getLastName());
+                if (success) {
+                    System.out.println("Deletion successful");
+                } else {
+                    System.out.println("Deletion failed");
+                }
+            } else {
+                System.out.println("Did not delete.");
+            }
         }
     }
 
@@ -185,7 +171,6 @@ public class PatientProfInterface{
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the last name of the patient to find.");
         String response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
-        scanner.close();
 
         //check to see if exit
         if (checkForExit(response)) {
@@ -198,10 +183,8 @@ public class PatientProfInterface{
         //if no patient found, start again
         if(patient == null){
             System.out.println("No patient found.");
-            findPatientProf();
         }
-        //if patient found, display patient and start again
-        System.out.println("Found patient profile:");
+
         return patient;
     }
 
@@ -310,14 +293,6 @@ public class PatientProfInterface{
                 System.out.println("Invalid Input");
             }
         }
-
-        //if user wants to update more patient information, loop
-        System.out.println("Update more? (Y/N)");
-        response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
-        scanner.close();
-        if(response.equals("y")){
-            updatePatientProf(patient);
-        }
     }
 
 
@@ -363,16 +338,22 @@ public class PatientProfInterface{
      * Writes a all patients in the DB to the database file.
      */
     private void writeToDB(){
+        boolean success = true;
         try {
             DB.writeAllPatientProf(this.FILEPATH);
         }
         //if error, print and go back to menu
         catch(RuntimeException e){
             System.out.println(e.toString());
-            getUserChoice();
+            success = false;
         }
         //print success
-        System.out.println("Write Successful");
+        if(success){
+            System.out.println("Write Successful");
+        }
+        else{
+            System.out.println("Write Unsuccessful");
+        }
     }
 
 
@@ -386,6 +367,7 @@ public class PatientProfInterface{
         catch (RuntimeException e){
             System.out.println("Unable to read in database. " + e.toString());
         }
+        System.out.println("Database loaded");
     }
 
 
@@ -414,11 +396,17 @@ public class PatientProfInterface{
         coPay = Float.parseFloat(scanner.nextLine());
         System.out.println("Patient type (pediatric, adult, senior):");
         patientType = scanner.nextLine();
-        scanner.close();
         MedCond medCond = createNewMedCond();
 
-        PatientProf patientProf = new PatientProf(this.adminID, first, last, address,
-                phone, coPay, insuType, patientType, medCond);
+        PatientProf patientProf = null;
+        try {
+            patientProf = new PatientProf(this.adminID, first, last, address,
+                    phone, coPay, insuType, patientType, medCond);
+        }
+        catch(RuntimeException e){
+            System.out.println("Error creating patient. " + e.toString());
+            getUserChoice();
+        }
 
         return patientProf;
     }
@@ -442,7 +430,14 @@ public class PatientProfInterface{
         System.out.println("Patient allergies (none, food, medication, other):");
         algType = scanner.nextLine().strip();
 
-        return new MedCond(mdContact, mdPhone, algType, illType);
+        MedCond medCond = null;
+        try{
+            medCond = new MedCond(mdContact, mdPhone, algType, illType);
+        }
+        catch(RuntimeException e){
+            System.out.println("Error creating patient. " + e.toString());
+        }
+        return medCond;
     }
 
     /**
@@ -452,7 +447,10 @@ public class PatientProfInterface{
      */
     private void modifyPatientProf(){
         System.out.println("--Modify a patient profile--");
-        updatePatientProf(findAndReturnPatientProf());
+        PatientProf patientProf = findAndReturnPatientProf();
+        if(patientProf != null){
+            updatePatientProf(patientProf);
+        }
     }
 
 

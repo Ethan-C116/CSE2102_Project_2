@@ -11,7 +11,7 @@ public class PatientProfDB{
     public int numPatient = 0;
     private int currentPatientIndex = 0;
     private String fileName;
-    private String adminID; //adminID of the user
+    public String adminID; //adminID of the user
     private final List<PatientProf> patientList = new ArrayList<PatientProf>();
     private final String EXTENSION = "json";
     //used to see if findNextProfile has gone through entire list
@@ -25,6 +25,7 @@ public class PatientProfDB{
         if(!checkFileExtension(filePath, EXTENSION)){
             throw new RuntimeException("Expected a " + EXTENSION
                     + " file.");
+
         }
         this.adminID = adminID;
         this.fileName = filePath;
@@ -46,7 +47,8 @@ public class PatientProfDB{
         }
         else{
             System.out.println("No existing DB file found at " + this.fileName +
-                    ". Continue to start a new DB file.");
+                    ". Created a new DB file.");
+            writeAllPatientProf(this.fileName);
         }
     }
 
