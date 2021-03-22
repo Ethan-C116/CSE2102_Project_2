@@ -1,19 +1,18 @@
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Scanner;
 
 public class PatientProfDB{
-    public int numPatient = 0;
+    private int numPatient = 0;
     private int currentPatientIndex = 0;
     private String fileName;
-    public String adminID; //adminID of the user
+    private String adminID; //adminID of the user
     private final List<PatientProf> patientList = new ArrayList<PatientProf>();
-    private final String EXTENSION = "json";
+    private final String EXTENSION = "txt";
     //used to see if findNextProfile has gone through entire list
     private boolean findNextProfileReachedEnd = false;
     //used to indicate that the adminID has no patients in list
@@ -167,10 +166,27 @@ public class PatientProfDB{
 
 
     /**
-     * Writes the patientList to the specified filepath as a JSON file.
-     * @param filepath the desired filepath of the JSON file
+     * Writes the patientList to the specified filepath.
+     * @param filepath the desired filepath of the file
      */
     public void writeAllPatientProf(String filepath) throws RuntimeException{
+        /*
+         * Data is written in the form of:
+         * adminID
+         * First
+         * Last
+         * address
+         * phone
+         * copay
+         * patientType
+         * insuType
+         * mdContact
+         * mdPhone
+         * algType
+         * illType
+         * ..next patient data starts
+         */
+
         File databaseFile = new File(filepath);
         //create a new file.
         try {
@@ -193,15 +209,30 @@ public class PatientProfDB{
             throw new RuntimeException("Couldn't create FileWriter" + e);
         }
 
-        //construct JSONArray to write to file
-        JSONArray patientJsonArray = constructPatientJsonArray(this.patientList);
+        //write patient information
+        for(PatientProf patientProf : this.patientList){
+            StringBuilder patientInfo = new StringBuilder();
+            //add info from patientProf
+            patientInfo.append(patientProf.getAdminID()).append("\n");
+            patientInfo.append(patientProf.getFirstName()).append("\n");
+            patientInfo.append(patientProf.getLastName()).append("\n");
+            patientInfo.append(patientProf.getAddress()).append("\n");
+            patientInfo.append(patientProf.getPhone()).append("\n");
+            patientInfo.append(patientProf.getCoPay()).append("\n");
+            patientInfo.append(patientProf.getPatientType()).append("\n");
+            patientInfo.append(patientProf.getInsuType()).append("\n");
+            //adds info from the patient's medCond
+            patientInfo.append(patientProf.getMedCondInfo().getMdContact()).append("\n");
+            patientInfo.append(patientProf.getMedCondInfo().getMdPhone()).append("\n");
+            patientInfo.append(patientProf.getMedCondInfo().getAlgType()).append("\n");
+            patientInfo.append(patientProf.getMedCondInfo().getIllType()).append("\n");
 
-        //write file
-        try {
-            writer.write(patientJsonArray.toString(4));
-        }
-        catch(IOException e){
-            throw new RuntimeException("Failed to write database file " + e);
+            try {
+                writer.write(patientInfo.toString());
+            }
+            catch (IOException e){
+                throw new RuntimeException("Failed to write database file " + e);
+            }
         }
 
         //close file
@@ -210,93 +241,66 @@ public class PatientProfDB{
             writer.close();
         }
         catch (IOException e){
-            throw new RuntimeException("FileWriter couldn't close properly.");
+            throw new RuntimeException("FileWriter couldn't close properly. Data may not have saved.");
         }
     }
 
 
     /**
-     * Scans the contents of a JSON PatientDB file into the DB. This does not check for
+     * Scans the contents of a PatientDB file into the DB. This does not check for
      * duplicates before adding a profile to the DB.
-     * @param filePath The filepath of a database JSON file
+     * @param filePath The filepath of a database file
      */
     public void initializeDatabase(String filePath) throws RuntimeException{
-        FileReader fileReader;
+        //open file
+        File file;
         try {
-            fileReader = new FileReader(filePath);
+            file = new File(filePath);
         }
-        catch(FileNotFoundException e){
+        catch(NullPointerException e){
             throw new RuntimeException("Unable to find file '" + filePath + "'.");
         }
 
-
         this.fileName = filePath;
-        JSONTokener tokener = new JSONTokener(fileReader); //tokener to read JSON from file
-        JSONArray array;
+        Scanner fileScanner;
         try {
-            array = new JSONArray(tokener); //JSON array from file
-        }
-        catch (JSONException e){
-            throw new RuntimeException("Error parsing file " + this.fileName + ". " + e.toString());
-        }
-
-
-        int JSONIndex = 0;
-        //iterate through JSONArray until exception
-        while(true){
-            JSONObject JSONPatient;
-            //try to get next object in array
-            try{
-                JSONPatient = array.getJSONObject(JSONIndex);
-            }
-            //if no more objects or other problem break loop
-            catch (JSONException e){
-                break;
-            }
-
-            //initialize temp values to store read patient info
-            String adminID, firstName, lastName, address, phone, insuType, patientType;
-            float coPay;
-            String mdContact, mdPhone, algType, illType;
-
-            try {
-                //get patientProf values from JSON object
-                adminID = JSONPatient.getString("adminID");
-                firstName = JSONPatient.getString("firstName");
-                lastName = JSONPatient.getString("lastName");
-                address = JSONPatient.getString("address");
-                phone = JSONPatient.getString("phone");
-                coPay = JSONPatient.getFloat("coPay");
-                insuType = JSONPatient.getString("insuType");
-                patientType = JSONPatient.getString("patientType");
-
-                //get patient's MedCondInfo values
-                JSONObject JSONMedCond = JSONPatient.getJSONObject("medCondInfo");
-                mdContact = JSONMedCond.getString("mdContact");
-                mdPhone = JSONMedCond.getString("mdPhone");
-                algType = JSONMedCond.getString("algType");
-                illType = JSONMedCond.getString("illType");
-            }
-            catch(JSONException e){
-                throw new RuntimeException("Error reading in database file." +
-                        "Bad JSON file or information missing.");
-            }
-
-            //create patientProf
-            MedCond medCond = new MedCond(mdContact, mdPhone, algType, illType);
-            PatientProf patientProf = new PatientProf(adminID, firstName, lastName, address,
-                    phone, coPay, insuType, patientType, medCond);
-            //add patientProf to DB
-            insertNewProfile(patientProf);
-
-            //iterate index
-            JSONIndex++;
+            fileScanner = new Scanner(file);
+        } catch (FileNotFoundException e){
+            throw new RuntimeException("Unable to find file '" + filePath + "'.");
         }
 
+        String adminID, firstName, lastName, address, phone, insuType, patientType;
+        float coPay;
+        String mdContact, mdPhone, algType, illType;
+        //scan through file
+        while(fileScanner.hasNextLine()){
+            //get patient info
+            adminID = fileScanner.nextLine();
+            firstName = fileScanner.nextLine();
+            lastName = fileScanner.nextLine();
+            address = fileScanner.nextLine();
+            phone = fileScanner.nextLine();
+            coPay = Float.parseFloat(fileScanner.nextLine());
+            patientType = fileScanner.nextLine();
+            insuType = fileScanner.nextLine();
+            //get medCond info for patient
+            mdContact = fileScanner.nextLine();
+            mdPhone = fileScanner.nextLine();
+            algType = fileScanner.nextLine();
+            illType = fileScanner.nextLine();
+
+            //construct patient and add to database
+            PatientProf patient = new PatientProf(adminID, firstName, lastName,
+                    address, phone, coPay, insuType, patientType,
+                    new MedCond(mdContact, mdPhone, algType, illType));
+            this.patientList.add(patient);
+        }
+
+        //close scanner
         try {
-            fileReader.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Couldn't close fileReader.");
+            fileScanner.close();
+        } catch (IllegalStateException e) {
+            throw new RuntimeException("Couldn't close file Scanner. " + e.toString());
         }
     }
 
@@ -316,46 +320,7 @@ public class PatientProfDB{
     }
 
 
-    /**
-     * Constructs a JSONArray that contains all patients in the patientList
-     * @param patientList List of PatientProfs
-     * @return a JSONArray containing all patients in patientList
-     */
-
-    private JSONArray constructPatientJsonArray(List<PatientProf> patientList){
-        JSONArray dbArray = new JSONArray();
-        //iterate over patients in DB
-        for(PatientProf patient: this.patientList){
-            //create object for each patient
-            JSONObject patientObj = new JSONObject();
-            //fill out patient information
-            patientObj.put("adminID", patient.getAdminID());
-            patientObj.put("firstName", patient.getFirstName());
-            patientObj.put("lastName", patient.getLastName());
-            patientObj.put("address", patient.getAddress());
-            patientObj.put("phone", patient.getPhone());
-            patientObj.put("coPay", patient.getCoPay());
-            patientObj.put("insuType", patient.getInsuType());
-            patientObj.put("patientType", patient.getPatientType());
-
-            //create medCondObj to add to patientObj
-            JSONObject medCondObj = new JSONObject();
-            MedCond medCond = patient.getMedCondInfo();
-            medCondObj.put("mdContact", medCond.getMdContact());
-            medCondObj.put("mdPhone", medCond.getMdPhone());
-            medCondObj.put("algType", medCond.getAlgType());
-            medCondObj.put("illType", medCond.getIllType());
-            //put the medCondObj into patientObj
-            patientObj.put("medCondInfo", medCondObj);
-
-            //add patient object to dbArray
-            dbArray.put(patientObj);
-        }
-
-        return dbArray;
-    }
-
-    public void constructTestPatientList(int numPatients){
+    private void constructTestPatientList(int numPatients){
         for(int i = 0; i < numPatients; i++){
             String firstName = "john" + i;
             String lastName = "doe" + i;

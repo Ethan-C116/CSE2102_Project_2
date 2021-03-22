@@ -7,8 +7,6 @@ public class PatientProfInterface{
     private PatientProfDB DB;
     private String FILEPATH;
     private String adminID;
-    private final String HELPFILEPATH = "C:\\Users\\Ethan\\IdeaProjects\\CSE2102_Project_1\\src\\help_info.txt";
-    private final String WELCOME_MESSAGE = "Welcome to the Integrated Patient Management System!";
 
 
     /**
@@ -95,11 +93,7 @@ public class PatientProfInterface{
                     initDB();
                 }
                 case "h" -> {
-                    try {
-                        printHelpMessage();
-                    } catch (IOException e) {
-                        System.out.println("Error printing help message." + e.toString());
-                    }
+                    printHelpMessage();
                 }
                 case "e" -> {
                     System.out.println("Are you sure you want to exit? (Y/N)");
@@ -460,6 +454,7 @@ public class PatientProfInterface{
         }
         catch(RuntimeException e){
             System.out.println("Error creating patient. " + e.toString());
+            getUserChoice();
         }
         return medCond;
     }
@@ -478,16 +473,36 @@ public class PatientProfInterface{
     }
 
 
-    private void printHelpMessage() throws IOException{
-        File helpInfo = new File(this.HELPFILEPATH);
-        Scanner scanner = new Scanner(helpInfo);
-
-        //read and display the help file
-        while(scanner.hasNextLine()){
-            System.out.println(scanner.nextLine());
-        }
-
-        scanner.close();
+    private void printHelpMessage(){
+        String helpMessage = "PatientProfInterface(String databaseFile)\n" +
+                "\tdatabaseFile - The file path of a database file. \n" +
+                "\t\tIf the database file exists it will be loaded. If the file does not exist,\n" +
+                "\t\tthe file path will be used to store the database if writeToDB() is called.\n" +
+                "\t\n" +
+                "\tThe adminID entered on launch will be used for all database functions. It cannot\n" +
+                "\tbe changed after it's confirmed.\n" +
+                "--Menu Options--\n" +
+                "\t1 - Enter a new PatientProf\n" +
+                "\t\tCreate a new patient profile and add it to the database.\n" +
+                "\t2 - Delete a PatientProf\n" +
+                "\t\tDeletes the patient profile found using the information entered.\n" +
+                "\t3 - Find a PatientProf\n" +
+                "\t\tFinds and displays a patient profile using the information provided.\n" +
+                "\t\tIf more than one patient exists with the same information, only the first\n" +
+                "\t\twill be displayed.\n" +
+                "\t4 - Modify a PatientProf\n" +
+                "\t\tAllows modification of an existing patient profile.\n" +
+                "\t5 - Display all Profiles\n" +
+                "\t\tDisplays all patient profiles which the user has access to.\n" +
+                "\t6 - Write changes to database file\n" +
+                "\t\tUpdates the database file passed in at launch. If there is no existing\n" +
+                "\t\tdatabase file at that file path one will be created.\n" +
+                "\t7 - Load information from database file.\n" +
+                "\t\tLoads a database from a given file path. The contents of the file will\n" +
+                "\t\tbe added to the existing database. This does not check for duplicates.\n" +
+                "\th - Prints this help message.\n" +
+                "\te - Prompts to save and then exits the program.";
+        System.out.println(helpMessage);
         getUserChoice();
     }
 
