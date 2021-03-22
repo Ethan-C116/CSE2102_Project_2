@@ -24,3 +24,5 @@ PatientProfInterface(String databaseFile)
 	7 - Load information from database file.
 		Loads a database from a given file path. The contents of the file will
 		be added to the existing database. This does not check for duplicates.
+	h - Prints this help message.
+	e - Prompts to save and then exits the program.

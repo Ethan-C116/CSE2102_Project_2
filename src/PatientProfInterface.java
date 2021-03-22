@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.IllformedLocaleException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -66,6 +65,7 @@ public class PatientProfInterface{
             System.out.println("6 - Write changes to database file");
             System.out.println("7 - Load information from database file");
             System.out.println("h - Display help information");
+            System.out.println("e - Exit");
             Scanner scanner = new Scanner(System.in);
             String response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
 
@@ -101,6 +101,24 @@ public class PatientProfInterface{
                         System.out.println("Error printing help message." + e.toString());
                     }
                 }
+                case "e" -> {
+                    System.out.println("Are you sure you want to exit? (Y/N)");
+                    String input = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
+
+                    //if want to exit check for save
+                    if(input.equals("y")){
+                        System.out.println("Do you wish to save your changes to the database file? (Y/N)");
+                        input = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
+                        //save changes
+                        if(input.equals("y")){
+                            writeToDB();
+                        }
+                        //exit
+                        System.out.println("Exiting...Goodbye");
+                        System.exit(0);
+                    }
+                    //if not exiting loop again
+                }
             }
         }
 
@@ -119,7 +137,7 @@ public class PatientProfInterface{
         String response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
 
         //check to see if exit
-        if (checkForExit(response)) {
+        if (checkForMethodExit(response)) {
             getUserChoice();
         }
         //find patient
@@ -173,7 +191,7 @@ public class PatientProfInterface{
         String response = scanner.nextLine().toLowerCase(Locale.ROOT).strip();
 
         //check to see if exit
-        if (checkForExit(response)) {
+        if (checkForMethodExit(response)) {
             getUserChoice();
         }
 
@@ -306,6 +324,7 @@ public class PatientProfInterface{
         else {
             System.out.println("\tLast: " + patientProf.getLastName());
             System.out.println("\tFirst: " + patientProf.getFirstName());
+            System.out.println("\tAddress: " + patientProf.getAddress());
             System.out.println("\tPhone: " + patientProf.getPhone());
             System.out.println("\tType: " + patientProf.getPatientType());
             System.out.println("\tInsurance: " + patientProf.getInsuType());
@@ -326,9 +345,14 @@ public class PatientProfInterface{
      */
     private void displayAllPatientProf(){
         List<PatientProf> patientList = DB.getPatientList();
-        for(PatientProf patient:patientList){
-            if(patient.getAdminID().equals(this.adminID)){
-                displayPatientProf(patient);
+        if(patientList.toArray().length == 0){
+            System.out.println("No patients in DB.");
+        }
+        else {
+            for (PatientProf patient : patientList) {
+                if (patient.getAdminID().equals(this.adminID)) {
+                    displayPatientProf(patient);
+                }
             }
         }
     }
@@ -467,7 +491,7 @@ public class PatientProfInterface{
         getUserChoice();
     }
 
-    private boolean checkForExit(String message){
+    private boolean checkForMethodExit(String message){
         message = message.toLowerCase(Locale.ROOT).strip();
         if(message.equals("-e")){
             return true;
@@ -476,4 +500,5 @@ public class PatientProfInterface{
             return false;
         }
     }
+
 }

@@ -96,12 +96,14 @@ public class PatientProfDB{
      * @return the associated PatientProfile. Will be Null if not found.
      */
     public @Nullable PatientProf findProfile(String adminID, String lastName){
+        lastName = lastName.strip();
         PatientProf returnValue = null;
         //go through each patient in the DB
         for(PatientProf patient: this.patientList){
             //if adminID and lastName match return the patient
             if(patient.getAdminID().equals(adminID) &
-                    patient.getLastName().equals(lastName)){
+                    (patient.getLastName().equals(lastName) |
+                            patient.getLastName().toLowerCase(Locale.ROOT).equals(lastName.toLowerCase(Locale.ROOT)))){
                 returnValue = patient;
                 break;
             }
@@ -353,7 +355,7 @@ public class PatientProfDB{
         return dbArray;
     }
 
-    private void constructTestPatientList(int numPatients){
+    public void constructTestPatientList(int numPatients){
         for(int i = 0; i < numPatients; i++){
             String firstName = "john" + i;
             String lastName = "doe" + i;
