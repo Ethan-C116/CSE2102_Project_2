@@ -32,6 +32,7 @@ public class MedCond {
         }
     }
 
+
     // Getters for class
     public String getMdContact(){
         return this.mdContact;

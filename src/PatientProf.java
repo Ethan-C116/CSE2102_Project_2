@@ -18,7 +18,7 @@ public class PatientProf{
 
     public PatientProf(String adminID, String firstName, String lastName, String address,
                        String phone, Float coPay, String insuType,
-                       String patientType, @Nullable MedCond medCondInfo) throws RuntimeException{
+                       String patientType, @Nullable MedCond medCondInfo) throws RuntimeException {
         this.adminID = adminID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -27,21 +27,19 @@ public class PatientProf{
         this.coPay = coPay;
         //check insuType is correct
         insuType = insuType.toLowerCase(Locale.ROOT).strip();
-        if(insuType.equals("private") | insuType.equals("government")){
+        if (insuType.equals("private") | insuType.equals("government")) {
             this.insuType = insuType;
-        }
-        else{
+        } else {
             throw new RuntimeException("Insurance type should be 'Private'" +
                     " or 'Government' not " + insuType);
         }
 
         //check patientType is correct
         patientType = patientType.toLowerCase(Locale.ROOT).strip();
-        if(patientType.equals("pediatric") | patientType.equals("adult")
-                | patientType.equals("senior")){
+        if (patientType.equals("pediatric") | patientType.equals("adult")
+                | patientType.equals("senior")) {
             this.patientType = patientType;
-        }
-        else{
+        } else {
             throw new RuntimeException("Patient type should be 'Pediatric', " +
                     "'Adult', or 'Senior' not " + patientType);
         }

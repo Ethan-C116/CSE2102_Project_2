@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class CSE2102_Project_1 {
+public class CSE2102_Project_2 {
     public static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the file path of an existing database file " +

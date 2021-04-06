@@ -19,6 +19,7 @@ public class PatientProfDB{
     private boolean noProfilesMatching = false;
 
 
+
     public PatientProfDB(String filePath, String adminID) throws RuntimeException {
         //check if correct type of file
         if(!checkFileExtension(filePath, EXTENSION)){
