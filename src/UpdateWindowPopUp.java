@@ -4,12 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class UpdateWindowPopUp extends JFrame {
-    private final Dimension SCREEN_DIMENSION = getScreenDimension();
-    private final int DEFAULT_PADDING_X = 10;
-    private final int DEFAULT_PADDING_Y = 10;
-    private final Insets DEFAULT_INSET = new Insets(0, 5, 0, 10);
-    private final Insets SPACED_INSET = new Insets(5, 5, 5,5);
-    private final Insets TEXT_FIELD_INSET = new Insets(10, 0, 5,15);
+    private final Dimension SCREEN_DIMENSION = WindowTools.getScreenDimension();
     private JPanel panel;
     private JLabel titleLabel;
     private JLabel adminLabel;
@@ -35,10 +30,8 @@ public class UpdateWindowPopUp extends JFrame {
         this.setMinimumSize(new Dimension(300, 300));
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         //put window off-center
-        int screenW = (int) SCREEN_DIMENSION.getWidth();
-        int screenH = (int) SCREEN_DIMENSION.getHeight();
-        this.setLocation((screenW - (int) this.getMinimumSize().getWidth()) / 2 + 50,
-                (screenH - (int) this.getMinimumSize().getHeight()) / 2 + 30);
+        int[] coordinates = WindowTools.getWindowStartCoordinates(this);
+        this.setLocation(coordinates[0], coordinates[1]);
 
 
         panel = new JPanel(new GridBagLayout());
@@ -47,18 +40,18 @@ public class UpdateWindowPopUp extends JFrame {
         //layout starts center
         gbConstraints.anchor = GridBagConstraints.CENTER;
         //set internal padding to space out elements
-        gbConstraints.ipadx = DEFAULT_PADDING_X;
-        gbConstraints.ipady = DEFAULT_PADDING_Y;
-        gbConstraints.insets = SPACED_INSET;
+        gbConstraints.ipadx = WindowTools.DEFAULT_PADDING_X;
+        gbConstraints.ipady = WindowTools.DEFAULT_PADDING_Y;
+        gbConstraints.insets = WindowTools.SPACED_INSET;
 
         //constraints for text fields
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
         //layout starts at center left
         textFieldConstraints.anchor = GridBagConstraints.LINE_START;
         //set internal padding to space out elements
-        textFieldConstraints.ipadx = DEFAULT_PADDING_X;
-        textFieldConstraints.ipady = DEFAULT_PADDING_Y;
-        textFieldConstraints.insets = TEXT_FIELD_INSET;
+        textFieldConstraints.ipadx = WindowTools.DEFAULT_PADDING_X;
+        textFieldConstraints.ipady = WindowTools.DEFAULT_PADDING_Y;
+        textFieldConstraints.insets = WindowTools.TEXT_FIELD_INSET;
         //make text fields expand horizontally
         textFieldConstraints.gridwidth = GridBagConstraints.REMAINDER;
         textFieldConstraints.weightx = 1;
@@ -66,7 +59,7 @@ public class UpdateWindowPopUp extends JFrame {
 
         //set up titleLabel
         titleLabel = new JLabel("Update");
-        gbConstraints.insets = SPACED_INSET;
+        gbConstraints.insets = WindowTools.SPACED_INSET;
         gbConstraints.gridx = 0;
         gbConstraints.gridy = 0;
         //4 wide. from 0-3
@@ -75,7 +68,7 @@ public class UpdateWindowPopUp extends JFrame {
         //add to panel
         panel.add(titleLabel, gbConstraints);
         //reset constraints
-        gbConstraints.insets = DEFAULT_INSET;
+        gbConstraints.insets = WindowTools.DEFAULT_INSET;
         gbConstraints.gridwidth = 1;
         gbConstraints.weightx = 1;
 
@@ -124,16 +117,13 @@ public class UpdateWindowPopUp extends JFrame {
         gbConstraints.gridwidth = 4;
         panel.add(submitButton, gbConstraints);
         //reset constraints
-        gbConstraints.insets = TEXT_FIELD_INSET;
+        gbConstraints.insets = WindowTools.TEXT_FIELD_INSET;
         gbConstraints.gridwidth = 1;
 
         this.add(panel);
         this.pack();
     }
 
-    private Dimension getScreenDimension(){
-        return Toolkit.getDefaultToolkit().getScreenSize();
-    }
 
     private void setUpListener(JFrame frame){
         submitButton.addActionListener(new ActionListener() {

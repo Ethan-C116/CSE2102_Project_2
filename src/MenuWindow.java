@@ -4,12 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuWindow extends JFrame {
-    private final Dimension SCREEN_DIMENSION = getScreenDimension();
-    private final int DEFAULT_PADDING_X = 10;
-    private final int DEFAULT_PADDING_Y = 10;
-    private final Insets DEFAULT_INSET = new Insets(0, 0, 0, 0);
-    private final Insets SPACED_INSET = new Insets(10, 0, 10,0);
-    private final Insets EXTRA_SPACED_INSET = new Insets(15, 0, 15,0);
+    private final Dimension SCREEN_DIMENSION = WindowTools.getScreenDimension();
 
     private JLabel titleLabel;
     private JPanel mainPanel;
@@ -31,11 +26,8 @@ public class MenuWindow extends JFrame {
         //adjust window size
         this.setMinimumSize(new Dimension(400, 300));
         //put window in center of screen
-        int screenW = (int)SCREEN_DIMENSION.getWidth();
-        int screenH = (int)SCREEN_DIMENSION.getHeight();
-        //put window in the center
-        this.setLocation((screenW - (int) this.getMinimumSize().getWidth())/2,
-                (screenH - (int) this.getMinimumSize().getHeight())/2);
+        int[] coordinates = WindowTools.getWindowStartCoordinates(this);
+        this.setLocation(coordinates[0], coordinates[1]);
 
         //create panel
         mainPanel = new JPanel(new GridBagLayout());
@@ -43,8 +35,8 @@ public class MenuWindow extends JFrame {
         //layout starts at center top
         gbConstraints.anchor = GridBagConstraints.PAGE_START;
         //set internal padding to space out elements
-        gbConstraints.ipadx = DEFAULT_PADDING_X;
-        gbConstraints.ipady = DEFAULT_PADDING_Y;
+        gbConstraints.ipadx = WindowTools.DEFAULT_PADDING_X;
+        gbConstraints.ipady = WindowTools.DEFAULT_PADDING_Y;
 
         //title
         titleLabel = new JLabel("Integrated Patient System");
@@ -52,13 +44,13 @@ public class MenuWindow extends JFrame {
         titleLabel.setFont(titleLabel.getFont().deriveFont(15.0F));
 
         //adjust external padding of label
-        gbConstraints.insets = SPACED_INSET;
+        gbConstraints.insets = WindowTools.SPACED_INSET;
 
         gbConstraints.gridx = 0;
         gbConstraints.gridy = 0;
         mainPanel.add(titleLabel, gbConstraints);
         //reset inset to default
-        gbConstraints.insets = DEFAULT_INSET;
+        gbConstraints.insets = WindowTools.DEFAULT_INSET;
 
         //store radioButtons in a group and add to panel
         menuButtonGroup = new ButtonGroup();
@@ -115,18 +107,14 @@ public class MenuWindow extends JFrame {
         //add submit button to panel
         gbConstraints.gridx = 0;
         gbConstraints.gridy = 6;
-        gbConstraints.insets = EXTRA_SPACED_INSET;
+        gbConstraints.insets = WindowTools.EXTRA_SPACED_INSET;
         mainPanel.add(submitButton, gbConstraints);
-        gbConstraints.insets = DEFAULT_INSET;
+        gbConstraints.insets = WindowTools.DEFAULT_INSET;
 
         //add panel to frame
         this.add(mainPanel);
         this.pack();
 
-    }
-
-    private Dimension getScreenDimension(){
-        return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
     //main for testing
