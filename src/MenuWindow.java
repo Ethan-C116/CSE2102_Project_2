@@ -24,7 +24,7 @@ public class MenuWindow extends JFrame {
 
     public MenuWindow (){
         //create a JFrame
-        super("Main menu");
+        super("IPS - Main menu");
         //stop program on close
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -33,6 +33,7 @@ public class MenuWindow extends JFrame {
         //put window in center of screen
         int screenW = (int)SCREEN_DIMENSION.getWidth();
         int screenH = (int)SCREEN_DIMENSION.getHeight();
+        //put window in the center
         this.setLocation((screenW - (int) this.getMinimumSize().getWidth())/2,
                 (screenH - (int) this.getMinimumSize().getHeight())/2);
 
