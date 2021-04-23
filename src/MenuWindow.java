@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuWindow extends JFrame {
-    private final Dimension SCREEN_DIMENSION = WindowTools.getScreenDimension();
-
     private JLabel titleLabel;
     private JPanel mainPanel;
     private ButtonGroup menuButtonGroup;
@@ -15,6 +13,8 @@ public class MenuWindow extends JFrame {
     private JRadioButton findRB;
     private JRadioButton displayRB;
     private JButton submitButton;
+    GridBagConstraints labelConstraints;
+
 
 
     public MenuWindow (){
@@ -31,12 +31,7 @@ public class MenuWindow extends JFrame {
 
         //create panel
         mainPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbConstraints = new GridBagConstraints();
-        //layout starts at center top
-        gbConstraints.anchor = GridBagConstraints.PAGE_START;
-        //set internal padding to space out elements
-        gbConstraints.ipadx = WindowTools.DEFAULT_PADDING_X;
-        gbConstraints.ipady = WindowTools.DEFAULT_PADDING_Y;
+        labelConstraints = WindowTools.getLabelConstraints();
 
         //title
         titleLabel = new JLabel("Integrated Patient System");
@@ -44,42 +39,42 @@ public class MenuWindow extends JFrame {
         titleLabel.setFont(titleLabel.getFont().deriveFont(15.0F));
 
         //adjust external padding of label
-        gbConstraints.insets = WindowTools.SPACED_INSET;
+        labelConstraints.insets = WindowTools.SPACED_INSET;
 
-        gbConstraints.gridx = 0;
-        gbConstraints.gridy = 0;
-        mainPanel.add(titleLabel, gbConstraints);
+        labelConstraints.gridx = 0;
+        labelConstraints.gridy = 0;
+        mainPanel.add(titleLabel, labelConstraints);
         //reset inset to default
-        gbConstraints.insets = WindowTools.DEFAULT_INSET;
+        labelConstraints.insets = WindowTools.DEFAULT_INSET;
 
         //store radioButtons in a group and add to panel
         menuButtonGroup = new ButtonGroup();
 
         createRB = new JRadioButton("Create Profile");
         menuButtonGroup.add(createRB);
-        gbConstraints.gridx = 0;
-        gbConstraints.gridy = 1;
-        mainPanel.add(createRB, gbConstraints);
+        labelConstraints.gridx = 0;
+        labelConstraints.gridy = 1;
+        mainPanel.add(createRB, labelConstraints);
 
         deleteRB = new JRadioButton("Delete Profile");
         menuButtonGroup.add(deleteRB);
-        gbConstraints.gridy = 2;
-        mainPanel.add(deleteRB, gbConstraints);
+        labelConstraints.gridy = 2;
+        mainPanel.add(deleteRB, labelConstraints);
 
         updateRB = new JRadioButton("Update Profile");
         menuButtonGroup.add(updateRB);
-        gbConstraints.gridy = 3;
-        mainPanel.add(updateRB, gbConstraints);
+        labelConstraints.gridy = 3;
+        mainPanel.add(updateRB, labelConstraints);
 
         findRB = new JRadioButton("Find/Display Profile");
         menuButtonGroup.add(findRB);
-        gbConstraints.gridy = 4;
-        mainPanel.add(findRB, gbConstraints);
+        labelConstraints.gridy = 4;
+        mainPanel.add(findRB, labelConstraints);
 
         displayRB = new JRadioButton("Display All Profiles");
         menuButtonGroup.add(displayRB);
-        gbConstraints.gridy = 5;
-        mainPanel.add(displayRB, gbConstraints);
+        labelConstraints.gridy = 5;
+        mainPanel.add(displayRB, labelConstraints);
 
         //set up submit button
         submitButton = new JButton("Submit");
@@ -105,11 +100,11 @@ public class MenuWindow extends JFrame {
             }
         });
         //add submit button to panel
-        gbConstraints.gridx = 0;
-        gbConstraints.gridy = 6;
-        gbConstraints.insets = WindowTools.EXTRA_SPACED_INSET;
-        mainPanel.add(submitButton, gbConstraints);
-        gbConstraints.insets = WindowTools.DEFAULT_INSET;
+        labelConstraints.gridx = 0;
+        labelConstraints.gridy = 6;
+        labelConstraints.insets = WindowTools.EXTRA_SPACED_INSET;
+        mainPanel.add(submitButton, labelConstraints);
+        labelConstraints.insets = WindowTools.DEFAULT_INSET;
 
         //add panel to frame
         this.add(mainPanel);
