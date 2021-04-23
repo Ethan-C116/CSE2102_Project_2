@@ -15,11 +15,11 @@ public class MenuWindow extends JFrame {
     private JButton submitButton;
     GridBagConstraints labelConstraints;
 
-
-
     public MenuWindow (){
         //create a JFrame
         super("IPS - Main menu");
+        //JFrame.setDefaultLookAndFeelDecorated(true);
+
         //stop program on close
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -83,19 +83,24 @@ public class MenuWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 //see what RadioButton is selected
                 if(createRB.isSelected()){
-                    System.out.println(createRB.getText());
+                    //create
+                    CreateProfile.createAndShowGUI();
                 }
                 else if(deleteRB.isSelected()){
-                    System.out.println(deleteRB.getText());
+                    //delete
+                    DeleteProfile.createAndShowGUI();
                 }
                 else if(updateRB.isSelected()){
-                    System.out.println(updateRB.getText());
+                    //update
+                    new UpdateWindow().setVisible(true);
                 }
                 else if(findRB.isSelected()){
-                    System.out.println(findRB.getText());
+                    //find
+                    new FindWindow().setVisible(true);
                 }
                 else if(displayRB.isSelected()){
-                    System.out.println(displayRB.getText());
+                    //display
+                    new DisplayAllWindow().setVisible(true);
                 }
             }
         });

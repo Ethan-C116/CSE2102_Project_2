@@ -153,12 +153,15 @@ public class CreateProfile extends JPanel{
         return pane;
     }
 
-    private static void createAndShowGUI() {
+    public static void createAndShowGUI() {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
 
         JFrame frame = new JFrame("Create Profile");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(300, 600));
+        int[] location = WindowTools.getWindowStartCoordinates(frame);
+        frame.setLocation(location[0], location[1]);
 
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(new GridLayout(1, 1));

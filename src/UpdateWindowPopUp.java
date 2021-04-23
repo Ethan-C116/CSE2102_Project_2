@@ -27,7 +27,7 @@ public class UpdateWindowPopUp extends JFrame {
 
         //set up frame
         this.setMinimumSize(new Dimension(300, 300));
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         //put window off-center
         int[] coordinates = WindowTools.getWindowStartCoordinates(this);
         this.setLocation(coordinates[0], coordinates[1]);

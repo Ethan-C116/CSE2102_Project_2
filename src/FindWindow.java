@@ -20,7 +20,7 @@ public class FindWindow extends JFrame {
         super("IPS - Find Patient");
 
         this.setMinimumSize(new Dimension(400, 300));
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         //get location for window
         int[] location = WindowTools.getWindowStartCoordinates(this);
         this.setLocation(location[0], location[1]);

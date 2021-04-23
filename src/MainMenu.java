@@ -10,6 +10,13 @@ public class MainMenu extends JPanel {
     public MainMenu(JFrame frame) {
         super(new BorderLayout());
         this.frame = frame;
+        this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.frame.setMinimumSize(new Dimension(400, 300));
+
+        //center the frame;
+        int[] location = WindowTools.getWindowStartCoordinates(this.frame);
+        this.frame.setLocation(location[0], location[1]);
+
         JLabel title;
 
         // create components
@@ -45,6 +52,33 @@ public class MainMenu extends JPanel {
 
         // bottom JButton to select menu option
         selectButton = new JButton("Select");
+        selectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(radioButtons[0].isSelected()){
+                    //create
+
+                }
+                else if(radioButtons[1].isSelected()){
+                    //delete
+                }
+                else if(radioButtons[2].isSelected()){
+                    //update
+                    UpdateWindow update = new UpdateWindow();
+                    update.setVisible(true);
+                }
+                else if(radioButtons[3].isSelected()){
+                    //find
+                    FindWindow find = new FindWindow();
+                    find.setVisible(true);
+                }
+                else if(radioButtons[4].isSelected()){
+                    //display all
+                    DisplayAllWindow display = new DisplayAllWindow();
+                    display.setVisible(true);
+                }
+            }
+        });
 
         return createPane(radioButtons, selectButton);
     }

@@ -10,7 +10,8 @@ public class DeleteProfile extends JPanel {
 
     public DeleteProfile(JFrame mainFrame) {
         super(new BorderLayout());
-        this.mainFrame = mainFrame; JLabel title;
+        this.mainFrame = mainFrame;
+        JLabel title;
 
         // create components
         JPanel choicePanel = createSimpleDialogueBox();
@@ -58,12 +59,15 @@ public class DeleteProfile extends JPanel {
 
     }
 
-    private static void createAndShowGUI() {
+    public static void createAndShowGUI() {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
 
         JFrame frame = new JFrame("Delete Profile");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(400, 300));
+        int[] location = WindowTools.getWindowStartCoordinates(frame);
+        frame.setLocation(location[0], location[1]);
 
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(new GridLayout(1, 1));

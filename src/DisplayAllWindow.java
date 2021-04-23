@@ -14,7 +14,7 @@ public class DisplayAllWindow extends JFrame {
     public DisplayAllWindow() {
         //set up frame
         super("IPS - Find Patient Results");
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setMinimumSize(new Dimension(300, 500));
         //start window off center
         int[] location = WindowTools.getWindowStartCoordinates(this);

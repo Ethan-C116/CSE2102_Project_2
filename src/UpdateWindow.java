@@ -19,7 +19,7 @@ public class UpdateWindow extends JFrame {
         //create a JFrame
         super("IPS - Update Profile");
         //stop program on close
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         //adjust window size
         this.setMinimumSize(new Dimension(400, 300));
