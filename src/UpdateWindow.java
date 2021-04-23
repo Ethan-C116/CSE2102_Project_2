@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class UpdateWindow extends JFrame {
-    private final Dimension SCREEN_DIMENSION = WindowTools.getScreenDimension();
     private JPanel panel;
     private JLabel titleLabel;
     private JLabel adminLabel;
@@ -24,12 +23,9 @@ public class UpdateWindow extends JFrame {
 
         //adjust window size
         this.setMinimumSize(new Dimension(400, 300));
-        //put window in center of screen
-        int screenW = (int) SCREEN_DIMENSION.getWidth();
-        int screenH = (int) SCREEN_DIMENSION.getHeight();
         //put window off-center
-        this.setLocation((screenW - (int) this.getMinimumSize().getWidth()) / 2 + 50,
-                (screenH - (int) this.getMinimumSize().getHeight()) / 2 + 30);
+        int[] center = WindowTools.getWindowStartCoordinates(this);
+        this.setLocation(center[0] + 15, center[1] + 15);
 
         //create panel
         panel = new JPanel(new GridBagLayout());

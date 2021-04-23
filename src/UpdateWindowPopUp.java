@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class UpdateWindowPopUp extends JFrame {
-    private final Dimension SCREEN_DIMENSION = WindowTools.getScreenDimension();
     private JPanel panel;
     private JLabel titleLabel;
     private JLabel adminLabel;
