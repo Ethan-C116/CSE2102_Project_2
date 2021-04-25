@@ -32,7 +32,7 @@ public class PatientProfInterface{
 
         //initialize DB using given filepath
         try {
-            DB = new PatientProfDB(databaseFilePath, this.adminID);
+            DB = new PatientProfDB(databaseFilePath);
         }
         catch (RuntimeException e){
             e.printStackTrace();

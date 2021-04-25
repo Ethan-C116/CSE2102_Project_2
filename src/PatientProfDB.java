@@ -10,7 +10,6 @@ public class PatientProfDB{
     private int numPatient = 0;
     private int currentPatientIndex = 0;
     private String fileName;
-    private String adminID; //adminID of the user
     private final List<PatientProf> patientList = new ArrayList<PatientProf>();
     private final String EXTENSION = "txt";
     //used to see if findNextProfile has gone through entire list
@@ -20,14 +19,13 @@ public class PatientProfDB{
 
 
 
-    public PatientProfDB(String filePath, String adminID) throws RuntimeException {
+    public PatientProfDB(String filePath) throws RuntimeException {
         //check if correct type of file
         if(!checkFileExtension(filePath, EXTENSION)){
             throw new RuntimeException("Expected a " + EXTENSION
                     + " file.");
 
         }
-        this.adminID = adminID;
         this.fileName = filePath;
 
         File DBFile = new File(this.fileName);
@@ -42,12 +40,12 @@ public class PatientProfDB{
 
         //if existing DB file read in the contents
         if(!newFile){
-            System.out.println("File already exists. Initializing existing DB at " + this.fileName);
+            //System.out.println("File already exists. Initializing existing DB at " + this.fileName);
             initializeDatabase(this.fileName);
         }
         else{
-            System.out.println("No existing DB file found at " + this.fileName +
-                    ". Created a new DB file.");
+            //System.out.println("No existing DB file found at " + this.fileName +
+            //       ". Created a new DB file.");
             writeAllPatientProf(this.fileName);
         }
     }
@@ -116,12 +114,12 @@ public class PatientProfDB{
      * Finds and returns the first patient in the database that matches the user's adminID.
      * @return the first patientProf in the database. Null if no patient with matching adminID is in database
      */
-    public @Nullable PatientProf findFirstProfile(){
+    public @Nullable PatientProf findFirstProfile(String adminID){
         //if the first patient in list matches adminID get that
         PatientProf patient = null;
         for(int i = 0; i < this.patientList.toArray().length; i++){
             PatientProf patientProf = this.patientList.get(i);
-            if(patientProf.getAdminID().equals(this.adminID)){
+            if(patientProf.getAdminID().equals(adminID)){
                 patient = patientProf;
                 break;
             }
@@ -136,11 +134,11 @@ public class PatientProfDB{
      * and iterates the currentPatientIndex. If the index has reached the end it resets to 0.
      * @return the next patientProf in the database, or null if no patient in database matching adminID.
      */
-    public @Nullable PatientProf findNextProfile(){
+    public @Nullable PatientProf findNextProfile(String adminID){
         while(this.currentPatientIndex < this.patientList.toArray().length){
             //start by checking if next patient matches adminID
             PatientProf patientProf = this.patientList.get(this.currentPatientIndex);
-            if(patientProf.getAdminID().equals(this.adminID)) {
+            if(patientProf.getAdminID().equals(adminID)) {
                 //if adminID matches, return that profile
                 currentPatientIndex++;
                 //make array loop back to beginning
@@ -321,7 +319,7 @@ public class PatientProfDB{
     }
 
 
-    private void constructTestPatientList(int numPatients){
+    private void constructTestPatientList(int numPatients, String adminID){
         for(int i = 0; i < numPatients; i++){
             String firstName = "john" + i;
             String lastName = "doe" + i;
@@ -336,7 +334,7 @@ public class PatientProfDB{
             String illType = "None";
 
             MedCond medCond = new MedCond(mdContact, mdPhone, algType, illType);
-            PatientProf patient = new PatientProf(this.adminID,
+            PatientProf patient = new PatientProf(adminID,
                     firstName, lastName, address, phone, coPay, insuType,
                     patientType, medCond);
 

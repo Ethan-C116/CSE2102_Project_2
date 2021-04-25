@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuWindow extends JFrame {
+    public static PatientProfDB DB;
     private JLabel titleLabel;
     private JPanel mainPanel;
     private ButtonGroup menuButtonGroup;
@@ -14,6 +15,7 @@ public class MenuWindow extends JFrame {
     private JRadioButton displayRB;
     private JButton submitButton;
     GridBagConstraints labelConstraints;
+    public static final String FILE_PATH = "C:\\\\Users\\Ethan\\Desktop\\database.txt";
 
     public MenuWindow (){
         //create a JFrame
@@ -22,6 +24,9 @@ public class MenuWindow extends JFrame {
 
         //stop program on close
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        //set up database
+        DB = new PatientProfDB(this.FILE_PATH);
 
         //adjust window size
         this.setMinimumSize(new Dimension(400, 300));

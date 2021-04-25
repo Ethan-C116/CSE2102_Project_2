@@ -14,10 +14,12 @@ public class UpdateWindow extends JFrame {
     private JTextField nameTF;
     private JComboBox<JLabel> updateCB;
     private JButton findButton;
+    private JFrame frame;
 
     public UpdateWindow() {
         //create a JFrame
         super("IPS - Update Profile");
+        frame = this;
         //stop program on close
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -130,19 +132,22 @@ public class UpdateWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 //see what is selected in the ComboBox
                 String selection = updateCB.getSelectedItem().toString();
-                System.out.println("Update selection: " + selection);
+                //System.out.println("Update selection: " + selection);
 
                 //TODO find profile
                 String adminID = adminTF.getText().strip();
                 String lastName = nameTF.getText().strip();
 
-
-                PatientProf patientProf = null;
-
-                //if profile found:
-                //create new window to update
-                JFrame updatePopUp = new UpdateWindowPopUp(selection, adminID, lastName, patientProf);
-                updatePopUp.setVisible(true);
+                PatientProf patientProf = MenuWindow.DB.findProfile(adminID, lastName);
+                if(patientProf != null) {
+                    //if profile found create new window to update
+                    JFrame updatePopUp = new UpdateWindowPopUp(selection, adminID, lastName, patientProf);
+                    updatePopUp.setVisible(true);
+                }
+                else{
+                    JOptionPane.showMessageDialog(frame, "No matching Patient Profile found",
+                            "Error - No profile found", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
     }

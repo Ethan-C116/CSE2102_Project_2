@@ -27,7 +27,7 @@ public class PatientProf{
         this.coPay = coPay;
         //check insuType is correct
         insuType = insuType.toLowerCase(Locale.ROOT).strip();
-        if (insuType.equals("private") | insuType.equals("government")) {
+        if (insuType.equals("private") || insuType.equals("government")) {
             this.insuType = insuType;
         } else {
             throw new RuntimeException("Insurance type should be 'Private'" +
@@ -36,8 +36,8 @@ public class PatientProf{
 
         //check patientType is correct
         patientType = patientType.toLowerCase(Locale.ROOT).strip();
-        if (patientType.equals("pediatric") | patientType.equals("adult")
-                | patientType.equals("senior")) {
+        if (patientType.equals("pediatric") || patientType.equals("adult")
+                || patientType.equals("senior")) {
             this.patientType = patientType;
         } else {
             throw new RuntimeException("Patient type should be 'Pediatric', " +
