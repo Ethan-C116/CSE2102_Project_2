@@ -255,9 +255,4 @@ public class UpdateWindowPopUp extends JFrame {
         });
     }
 
-    public static void main(String[] args) {
-        UpdateWindowPopUp popUp = new UpdateWindowPopUp("Address",
-                "abc123", "doe", null);
-        popUp.setVisible(true);
-    }
 }

@@ -120,10 +120,11 @@ public class DeleteProfileWindow extends JFrame{
 
                 boolean deleted = MenuWindow.DB.deleteProfile(adminID, lastName);
                 if (!deleted) {
-                    JOptionPane.showMessageDialog(null, "Patient Profile Does Not Exist");
+                    JOptionPane.showMessageDialog(frame, "Patient Profile Does Not Exist");
                 } else {
                     // deletion was succesfful
-                    JOptionPane.showMessageDialog(null, "Patient Profile Deleted Successfully!");
+                    JOptionPane.showMessageDialog(frame, "Patient Profile Deleted Successfully!");
+                    MenuWindow.DB.writeAllPatientProf(MenuWindow.FILE_PATH);
                 }
 
             }
