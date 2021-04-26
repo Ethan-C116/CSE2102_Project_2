@@ -5,178 +5,280 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
-public class CreateProfile extends JPanel{
-    private JFrame mainFrame;
+public class CreateProfile extends JFrame {
+    private JPanel panel;
+    private JLabel titleLabel;
+    private JLabel adminLabel, fNameLabel, lNameLabel, addressLabel, phoneLabel, coPayLabel, iTypeLabel, pTypeLabel, mdConLabel, mdPhoneLabel, allLabel, illLabel;
+    private JTextField adminTF, fNameTF, lNameTF, addressTF, phoneTF, coPayTF, mdConTF, mdPhoneTF;
+    private JButton submitButton;
+    private JComboBox<JLabel> iTypeCB, pTypeCB, allTypeCB, illTypeCB;
+    private JFrame frame;
 
-    public CreateProfile(JFrame mainFrame) {
-        super(new BorderLayout());
-        this.mainFrame = mainFrame; JLabel title;
+    public CreateProfile() {
+        //create a JFrame
+        super("IPS - Create Profile");
+        frame = this;
+        //stop program on close
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        // create components
-        JPanel choicePanel = createSimpleDialogueBox();
+        //adjust window size
+        this.setMinimumSize(new Dimension(400, 300));
+        //put window off-center
+        int[] center = WindowTools.getWindowStartCoordinates(this);
+        this.setLocation(center[0] + 15, center[1] + 15);
 
-        title = new JLabel("Create Profile", JLabel.CENTER);
-        choicePanel.setBorder(BorderFactory.createEmptyBorder(20,20,5,20));
+        //create panel
+        panel = new JPanel(new GridBagLayout());
 
-        //Lay out the main panel.
-        add(title, BorderLayout.NORTH);
-        add(choicePanel, BorderLayout.CENTER);
+        //constraints for labels
+        GridBagConstraints gbConstraints = new GridBagConstraints();
+        //layout starts center
+        gbConstraints.anchor = GridBagConstraints.CENTER;
+        //set internal padding to space out elements
+        gbConstraints.ipadx = WindowTools.DEFAULT_PADDING_X;
+        gbConstraints.ipady = WindowTools.DEFAULT_PADDING_Y;
+        gbConstraints.insets = WindowTools.SPACED_INSET;
+
+        //constraints for text fields
+        GridBagConstraints textFieldConstraints = new GridBagConstraints();
+        //layout starts at center left
+        textFieldConstraints.anchor = GridBagConstraints.LINE_START;
+        //set internal padding to space out elements
+        textFieldConstraints.ipadx = WindowTools.DEFAULT_PADDING_X;
+        textFieldConstraints.ipady = WindowTools.DEFAULT_PADDING_Y;
+        textFieldConstraints.insets = WindowTools.TEXT_FIELD_INSET;
+        //make text fields expand horizontally
+        textFieldConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        textFieldConstraints.weightx = 1;
+        textFieldConstraints.fill = GridBagConstraints.HORIZONTAL;
+
+        //set up titleLabel
+        titleLabel = new JLabel("Create Profile");
+        gbConstraints.insets = WindowTools.DEFAULT_INSET;
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 0;
+        //4 wide. from 0-3
+        gbConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gbConstraints.weightx = 1;
+        //add to panel
+        panel.add(titleLabel, gbConstraints);
+        //reset constraints
+        gbConstraints.insets = WindowTools.DEFAULT_INSET;
+        gbConstraints.gridwidth = 1;
+        gbConstraints.weightx = 1;
+
+        //set up adminID label
+        adminLabel = new JLabel("Admin ID:");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 1;
+        panel.add(adminLabel, gbConstraints);
+
+        //set up adminID field
+        adminTF = new JTextField();
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 1;
+        panel.add(adminTF, textFieldConstraints);
+
+        //set up first name label
+        fNameLabel = new JLabel("First Name:");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 2;
+        panel.add(fNameLabel, gbConstraints);
+
+        //set up first name field
+        fNameTF = new JTextField();
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 2;
+        panel.add(fNameTF, textFieldConstraints);
+
+        //set up last name label
+        lNameLabel = new JLabel("Last Name:");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 3;
+        panel.add(lNameLabel, gbConstraints);
+
+        //set up last name field
+        lNameTF = new JTextField();
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 3;
+        panel.add(lNameTF, textFieldConstraints);
+
+        //set up address label
+        addressLabel = new JLabel("Address:");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 4;
+        panel.add(addressLabel, gbConstraints);
+
+        //set up address field
+        addressTF = new JTextField();
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 4;
+        panel.add(addressTF, textFieldConstraints);
+
+        //set up phone label
+        phoneLabel = new JLabel("Phone:");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 5;
+        panel.add(phoneLabel, gbConstraints);
+
+        //set up phone field
+        phoneTF = new JTextField();
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 5;
+        panel.add(phoneTF, textFieldConstraints);
+
+        //set up copay label
+        coPayLabel = new JLabel("Co-Pay:");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 6;
+        panel.add(coPayLabel, gbConstraints);
+
+        //set up copay field
+        coPayTF = new JTextField();
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 6;
+        panel.add(coPayTF, textFieldConstraints);
+
+        // set up insur. type label
+        iTypeLabel = new JLabel("Insur. Type: ");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 7;
+        panel.add(iTypeLabel, gbConstraints);
+
+        // set up insur. type dropdown
+        String[] insurOptions = {"Private", "Government"};
+        iTypeCB = new JComboBox(insurOptions);
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 7;
+        panel.add(iTypeCB, textFieldConstraints);
+
+        // set up Patient type label
+        pTypeLabel = new JLabel("Patient Type: ");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 8;
+        panel.add(pTypeLabel, gbConstraints);
+
+        // set up patient type dropdown
+        String[] patientOptions = {"Pediatric", "Adult", "Senior"};
+        pTypeCB = new JComboBox(patientOptions);
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 8;
+        panel.add(pTypeCB, textFieldConstraints);
+
+        //set up mdContact label
+        mdConLabel = new JLabel("Md Contact:");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 9;
+        panel.add(mdConLabel, gbConstraints);
+
+        //set up mdContact field
+        mdConTF = new JTextField();
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 9;
+        panel.add(mdConTF, textFieldConstraints);
+
+
+        //set up md Phone label
+        mdPhoneLabel = new JLabel("Md Phone:");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 10;
+        panel.add(mdPhoneLabel, gbConstraints);
+
+        //set up md Phone field
+        mdPhoneTF = new JTextField();
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 10;
+        panel.add(mdPhoneTF, textFieldConstraints);
+
+        // set up allergies label
+        allLabel = new JLabel("Allergies: ");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 11;
+        panel.add(allLabel, gbConstraints);
+
+        // set up allergies dropdown
+        String[] allOptions = {"none", "food", "medication", "other"};
+        allTypeCB = new JComboBox(allOptions);
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 11;
+        panel.add(allTypeCB, textFieldConstraints);
+
+        // set up illness label
+        illLabel = new JLabel("Illnesses: ");
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 12;
+        panel.add(illLabel, gbConstraints);
+
+        // set up illness dropdown
+        String[] illOptions = {"none", "CHD", "diabetes", "asthma", "other"};
+        illTypeCB = new JComboBox(illOptions);
+        textFieldConstraints.gridx = 1;
+        textFieldConstraints.gridy = 12;
+        panel.add(illTypeCB, textFieldConstraints);
+
+        //add submit button
+        submitButton = new JButton("Submit");
+        setUpListener();
+        gbConstraints.gridx = 0;
+        gbConstraints.gridy = 13;
+        gbConstraints.insets = new Insets(10, 15, 10, 15);
+        gbConstraints.gridwidth = 4;
+        panel.add(submitButton, gbConstraints);
+        //reset constraints
+        gbConstraints.insets = WindowTools.TEXT_FIELD_INSET;
+        gbConstraints.gridwidth = 1;
+
+        this.add(panel);
+        this.pack();
     }
 
-    private JPanel createSimpleDialogueBox() {
-        JButton selectButton = null;
-        JLabel[] labels = new JLabel[12];
-        JTextField[] textFields = new JTextField[8];
-        JComboBox[] jcbuttons = new JComboBox[4];
-
-        // admin ID label and text box
-        labels[0] = new JLabel("Admin ID: ");
-        labels[0].setBounds(150, 0, 100, 20);
-        textFields[0] = new JTextField();
-        textFields[0].setBounds(120,30,100,20);
-
-        // name label and text box
-        labels[1] = new JLabel("First Name: ");
-        labels[1].setBounds(10,60,100,20);
-        textFields[1] = new JTextField();
-        textFields[1].setBounds(120,60,100,20);
-
-        labels[2]= new JLabel("Last Name: ");
-        labels[2].setBounds(10,90,100,20);
-        textFields[2] = new JTextField();
-        textFields[2].setBounds(120,90,100,20);
-
-        // address label and text box
-        labels[3] = new JLabel("Address: ");
-        labels[3].setBounds(10,120,100,20);
-        textFields[3] = new JTextField();
-        textFields[3].setBounds(120,120,100,20);
-
-        // phone label and text box
-        labels[4] = new JLabel("Phone: ");
-        labels[4].setBounds(10,150,100,20);
-        textFields[4] = new JTextField();
-        textFields[4].setBounds(120,150,100,20);
-
-        // copay label and text box
-        labels[5] = new JLabel("Co-Pay: ");
-        labels[5].setBounds(10,180,100,20);
-        textFields[5] = new JTextField();
-        textFields[5].setBounds(120,180,100,20);
-
-        // insurance type
-        labels[6] = new JLabel("Insur. Type: ");
-        labels[6].setBounds(10,210,100,20);
-        // dropdown menu
-        String[] insurTypes = {"Private", "Government"};
-        jcbuttons[0] = new JComboBox(insurTypes);
-        jcbuttons[0].setBounds(120,210,100,20);
-
-        // patient type
-        labels[7] = new JLabel("Patient Type: ");
-        labels[7].setBounds(10,240,100,20);
-        // dropdown menu
-        String[] patientTypes = {"Pediatric", "Adult", "Senior"};
-        jcbuttons[1] = new JComboBox(patientTypes);
-        jcbuttons[1].setBounds(120,240,100,20);
-
-
-        // md contact and text box
-        labels[8] = new JLabel("Md Contact: ");
-        labels[8].setBounds(10,270,150,20);
-        textFields[6] = new JTextField();
-        textFields[6].setBounds(120,270,100,20);
-
-        // md phone and text box
-        labels[9] = new JLabel("Md Phone: ");
-        labels[9].setBounds(10,300,100,20);
-        textFields[7] = new JTextField();
-        textFields[7].setBounds(120,300,100,20);
-
-        // allergies
-        labels[10] = new JLabel("Allergies: ");
-        labels[10].setBounds(10,330,100,20);
-        String[] allTypes = {"none", "food", "medication", "other"};
-        jcbuttons[2] = new JComboBox(allTypes);
-        jcbuttons[2].setBounds(120,330,100,20);
-
-        // illnesses
-        labels[11] = new JLabel("Illnesses: ");
-        labels[11].setBounds(10,360,100,20);
-        String[] illTypes  = {"none", "CHD", "diabetes", "asthma", "other"};
-        jcbuttons[3] = new JComboBox(illTypes);
-        jcbuttons[3].setBounds(120,360,100,20);
-
-        // bottom JButton to select
-        selectButton = new JButton("Select");
-        selectButton.setBounds(120, 400, 100, 20);
-
-
-        return createPane(labels, textFields, jcbuttons, selectButton);
-    }
-
-    private JPanel createPane(JLabel[] labels, JTextField[] textFields, JComboBox[] jcbuttons, JButton showButton) {
-        JPanel box = new JPanel();
-        box.setLayout(new BoxLayout(box, BoxLayout.PAGE_AXIS));
-
-        box.add(labels[0]);
-        box.add(textFields[0]);
-        box.add(labels[1]);
-        box.add(textFields[1]);
-        box.add(labels[2]);
-        box.add(textFields[2]);
-        box.add(labels[3]);
-        box.add(textFields[3]);
-        box.add(labels[4]);
-        box.add(textFields[4]);
-        box.add(labels[5]);
-        box.add(textFields[5]);
-        box.add(labels[6]);
-        box.add(jcbuttons[0]);
-        box.add(labels[7]);
-        box.add(jcbuttons[1]);
-        box.add(labels[8]);
-        box.add(textFields[6]);
-        // md phone
-        box.add(labels[9]);
-        box.add(textFields[7]);
-        // allergies
-        box.add(labels[10]);
-        box.add(jcbuttons[2]);
-        // illnesses
-        box.add(labels[11]);
-        box.add(jcbuttons[3]);
-
-        JPanel pane = new JPanel(new BorderLayout());
-        pane.add(box, BorderLayout.NORTH);
-        pane.add(showButton, BorderLayout.SOUTH);
-        return pane;
-    }
-
-    public static void createAndShowGUI() {
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        JDialog.setDefaultLookAndFeelDecorated(true);
-
-        JFrame frame = new JFrame("Create Profile");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(300, 600));
-        int[] location = WindowTools.getWindowStartCoordinates(frame);
-        frame.setLocation(location[0], location[1]);
-
-        Container contentPane = frame.getContentPane();
-        contentPane.setLayout(new GridLayout(1, 1));
-        contentPane.add(new CreateProfile(frame));
-
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    public static void main(String[] args){
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    private void setUpListener(){
+        // set up button listener
+        submitButton.addActionListener(new ActionListener() {
             @Override
-            public void run() {
-                createAndShowGUI();
+            public void actionPerformed(ActionEvent e) {
+                // see what's selected in ComboBoxes
+                // private JComboBox<JLabel> iTypeCB, pTypeCB, allTypeCB, illTypeCB;
+                String insurSelection = iTypeCB.getSelectedItem().toString();
+                String patientSelection = pTypeCB.getSelectedItem().toString();
+                String allSelection = allTypeCB.getSelectedItem().toString();
+                String illSelection = illTypeCB.getSelectedItem().toString();
+
+                // insert a new profile
+                String adminID = adminTF.getText().strip();
+                String firstName = fNameTF.getText().strip();
+                String lastName = lNameTF.getText().strip();
+                String address = addressTF.getText().strip();
+                String phone = phoneTF.getText().strip();
+                String copayString = coPayTF.getText().strip();
+                Float copay = Float.parseFloat(copayString);
+                String mdcontact = mdConTF.getText().strip();
+                String mdphone = mdPhoneTF.getText().strip();
+
+                MedCond medCond = new MedCond(mdcontact, mdphone, allSelection, illSelection);
+                PatientProf patientProf = new PatientProf(adminID, firstName, lastName, address, phone, copay,
+                        insurSelection, patientSelection, medCond);
+                
+                MenuWindow.DB.insertNewProfile(patientProf);
+                MenuWindow.DB.writeAllPatientProf(MenuWindow.FILE_PATH);
+                
+                // make sure new profile is in database
+                PatientProf newpatient = MenuWindow.DB.findProfile(adminID, lastName); 
+                
+                if(newpatient != null){
+                    JOptionPane.showMessageDialog(null, "Patient Profile Successfuly Created!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error Creating Patient Profile");
+                }
+               
             }
         });
     }
+    public static void main(String[] args){
+        CreateProfile createProfile = new CreateProfile();
+        createProfile.setVisible(true);
+    }
+
+
+
 }
