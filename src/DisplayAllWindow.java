@@ -13,7 +13,7 @@ public class DisplayAllWindow extends JFrame{
 
     public DisplayAllWindow() {
         //create a JFrame
-        super("IPS - Update Profile");
+        super("IPS - Display Profiles");
         frame = this;
         //stop program on close
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
