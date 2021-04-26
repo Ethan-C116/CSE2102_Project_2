@@ -14,7 +14,7 @@ public class DisplayAllWindowPopUp extends JFrame {
 
     public DisplayAllWindowPopUp(String adminID) {
         //set up frame
-        super("IPS - Find Patient Results");
+        super("IPS - Display Patients Results");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setMinimumSize(new Dimension(300, 500));
 
