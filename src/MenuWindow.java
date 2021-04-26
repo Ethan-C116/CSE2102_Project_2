@@ -93,7 +93,7 @@ public class MenuWindow extends JFrame {
                 }
                 else if(deleteRB.isSelected()){
                     //delete
-                    DeleteProfile.createAndShowGUI();
+                    new DeleteProfileWindow().setVisible(true);
                 }
                 else if(updateRB.isSelected()){
                     //update
