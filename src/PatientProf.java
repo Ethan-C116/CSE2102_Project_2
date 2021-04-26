@@ -91,6 +91,7 @@ public class PatientProf{
     }
 
     public void setInsuType(String insuType) throws  RuntimeException{
+        insuType = insuType.toLowerCase(Locale.ROOT).strip();
         if(insuType.equals("private") | insuType.equals("government")){
             this.insuType = insuType;
         }
@@ -105,6 +106,7 @@ public class PatientProf{
     }
 
     public void setPatientType(String patientType) throws RuntimeException {
+        patientType = patientType.toLowerCase(Locale.ROOT).strip();
         if(patientType.equals("pediatric") | patientType.equals("adult")
                 | patientType.equals("senior")){
             this.patientType = patientType;

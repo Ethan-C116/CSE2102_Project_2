@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class PatientProfDB{
     private int numPatient = 0;
-    private int currentPatientIndex = 0;
+    public int currentPatientIndex = 0;
     private String fileName;
     private final List<PatientProf> patientList = new ArrayList<PatientProf>();
     private final String EXTENSION = "txt";
@@ -142,17 +142,23 @@ public class PatientProfDB{
                 //if adminID matches, return that profile
                 currentPatientIndex++;
                 //make array loop back to beginning
+                /*
                 if(currentPatientIndex >= this.patientList.toArray().length){
                     currentPatientIndex = 0;
                 }
+
+                 */
                 return patientProf;
             }
 
             currentPatientIndex++;
             //make array loop back to beginning
+            /*
             if(currentPatientIndex >= this.patientList.toArray().length){
                 currentPatientIndex = 0;
             }
+
+             */
 
         }
         //if nothing is found in array

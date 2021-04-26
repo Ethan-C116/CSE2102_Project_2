@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class UpdateWindow extends JFrame {
     private JPanel panel;
@@ -150,10 +149,6 @@ public class UpdateWindow extends JFrame {
                 }
             }
         });
-    }
-
-    private Dimension getScreenDimension(){
-        return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
     //main for testing

@@ -202,8 +202,7 @@ public class UpdateWindowPopUp extends JFrame {
 
                 //get new info to update
                 if(comboBox){
-                    updateInfo = updateCB.getSelectedItem().toString().toLowerCase(Locale.ROOT).strip();
-                    System.out.println(updateInfo);
+                    updateInfo = updateCB.getSelectedItem().toString().strip();
                 }
                 else {
                     updateInfo = updateTF.getText().strip();
@@ -220,7 +219,6 @@ public class UpdateWindowPopUp extends JFrame {
                     } else if (selection.equals("Insurance Type")) {
                         patient.setInsuType(updateInfo);
                     } else if (selection.equals("Patient Type")) {
-                        System.out.println(updateInfo);
                         patient.setPatientType(updateInfo);
                     } else if (selection.equals("Md Contact")) {
                         patient.getMedCondInfo().setMdContact(updateInfo);

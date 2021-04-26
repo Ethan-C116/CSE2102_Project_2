@@ -50,11 +50,16 @@ public class FindWindow extends JFrame {
                 String adminID = adminTF.getText().strip();
                 String lastName = nameTF.getText().strip();
 
-                //TODO call find patient method
-                //TODO remove driver code
+                //call find patient method
+                PatientProf patientProf = MenuWindow.DB.findProfile(adminID, lastName);
+
+                //driver code
+                /*
                 PatientProf patientProf = new PatientProf("123", "doe", "john",
                         "street", "860", (float)1.00, "private", "adult",
                         new MedCond("doctor", "doc phone", "none", "none"));
+
+                 */
 
                 if(patientProf != null){
                     //create dialog to show patient
